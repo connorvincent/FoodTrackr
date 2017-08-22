@@ -1,2 +1,6 @@
-# Cmps285Fall17Grp1
-Cmps285Fall17Grp1
+## Contributiors: 
+
+```bash
+name here - contact info here
+
+```
