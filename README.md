@@ -1,4 +1,4 @@
-## Contributiors: 
+## Contributors: 
 
 ```bash
 Connor Vincent - W0646304@selu.edu
