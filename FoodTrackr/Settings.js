@@ -33,7 +33,7 @@ export default class SettingsScreen extends React.Component {
                         <Image source={require('./Assets/calendar.png')} style={styles.mButtons} />
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigate('Settings')}>
+                <TouchableOpacity>
                     <View style={styles.bMenu}>
                         <Image source={require('./Assets/settings.png')} style={styles.aButton} />
                     </View>
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
         height: screenHeight * 0.15,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#ffc65e',
+        backgroundColor: '#D3D3D3',
     },
 
 });

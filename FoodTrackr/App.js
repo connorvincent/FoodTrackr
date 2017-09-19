@@ -23,34 +23,4 @@ export default navigate;
 
 const styles = StyleSheet.create({
 
-  bMenu: {
-      flex: 1,
-      flexDirection:'row',
-    backgroundColor: '#F5FCFF',
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-    },
-
-  container: {
-    flex: 1,
-    backgroundColor: '#F5FCFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  mButtons: {
-      width: screenWidth*0.25,
-      height: screenHeight * 0.15,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#FF9E24',
-  },
-  aButton: {
-      width: screenWidth * 0.25,
-      height: screenHeight * 0.15,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#ffc65e',
-  },
-
 });

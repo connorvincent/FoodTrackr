@@ -18,7 +18,7 @@ export default class InventoryScreen extends React.Component {
         const { navigate } = this.props.navigation;
         return (
             <View style={styles.bMenu}>
-                <TouchableOpacity onPress={() => navigate('Inventory')}>
+                <TouchableOpacity>
                     <View style={styles.bMenu}>
                         <Image source={require('./Assets/clipboard.png')} style={styles.aButton} />
                     </View>
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
         height: screenHeight * 0.15,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#ffc65e',
+        backgroundColor: '#D3D3D3',
     },
 
 });

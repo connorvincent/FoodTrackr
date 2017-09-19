@@ -28,7 +28,7 @@ export default class PlannerScreen extends React.Component {
                         <Image source={require('./Assets/book.png')} style={styles.mButtons} />
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigate('Planner')}>
+                <TouchableOpacity>
                     <View style={styles.bMenu}>
                         <Image source={require('./Assets/calendar.png')} style={styles.aButton} />
                     </View>
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
         height: screenHeight * 0.15,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#ffc65e',
+        backgroundColor: '#D3D3D3',
     },
 
 });
