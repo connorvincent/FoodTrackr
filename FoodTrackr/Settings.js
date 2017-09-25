@@ -12,38 +12,50 @@ export default class SettingsScreen extends React.Component {
 
     static navigationOptions = {
         title: 'Settings',
+        headerLeft: null,
     };
 
     render() {
         const { navigate } = this.props.navigation;
         return (
-            <View style={styles.bMenu}>
-                <TouchableOpacity onPress={() => navigate('Inventory')}>
+            <View style={styles.top}>
+                <View style={{ height: screenHeight * 0.75 }}>
+
+                </View>
+                <View style={styles.bMenu}>
                     <View style={styles.bMenu}>
-                        <Image source={require('./Assets/clipboard.png')} style={styles.mButtons} />
+                        <TouchableOpacity onPress={() => navigate('Inventory')}>
+                            <Image source={require('./Assets/clipboard.png')} style={styles.mButtons} />
+                        </TouchableOpacity>
                     </View>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigate('Recipes')}>
                     <View style={styles.bMenu}>
-                        <Image source={require('./Assets/book.png')} style={styles.mButtons} />
+                        <TouchableOpacity onPress={() => navigate('Recipes')}>
+                            <Image source={require('./Assets/book.png')} style={styles.mButtons} />
+                        </TouchableOpacity>
                     </View>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigate('Planner')}>
                     <View style={styles.bMenu}>
-                        <Image source={require('./Assets/calendar.png')} style={styles.mButtons} />
+                        <TouchableOpacity onPress={() => navigate('Planner')}>
+                            <Image source={require('./Assets/calendar.png')} style={styles.mButtons} />
+                        </TouchableOpacity>
                     </View>
-                </TouchableOpacity>
-                <TouchableOpacity>
                     <View style={styles.bMenu}>
-                        <Image source={require('./Assets/settings.png')} style={styles.aButton} />
+                        <TouchableOpacity>
+                            <Image source={require('./Assets/settings.png')} style={styles.aButton} />
+                        </TouchableOpacity>
                     </View>
-                </TouchableOpacity>
+                </View>
             </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
+
+    top: {
+        flex: 1,
+        backgroundColor: '#F5FCFF',
+        alignItems: 'flex-start',
+    },
 
     bMenu: {
         flex: 1,

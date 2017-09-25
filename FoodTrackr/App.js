@@ -18,6 +18,12 @@ const navigate = StackNavigator({
     Recipes: { screen: RecipesScreen },
     Planner: { screen: PlannerScreen },
     Settings: { screen: SettingsScreen },
+    }, {
+        transitionConfig: () => ({
+            transitionSpec: {
+                duration: 0,
+            },
+        }),
 });
 export default navigate;
 
