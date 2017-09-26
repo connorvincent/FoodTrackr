@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import {
     StyleSheet, Text, View, Image, Dimensions,
-    TouchableOpacity, AppRegistry, Alert
+    TouchableOpacity, AppRegistry, Alert,
+    List, FlatList, ListItem, SearchBar
 } from 'react-native';
 import { StackNavigator } from 'react-navigation';
+import { Constants, } from 'expo';
 
 var screenWidth = Dimensions.get('window').width;
 var screenHeight = Dimensions.get('window').height;
@@ -13,14 +15,22 @@ export default class RecipesScreen extends React.Component {
     static navigationOptions = {
         title: 'Recipes',
         headerLeft: null,
+        headerStyle: {
+            paddingTop: Constants.statusBarHeight,
+            height: 60 + Constants.statusBarHeight,
+        },
+    };
+
+    renderHeader = () => {
+        return <SearchBar placeholder="Type here..." lightTheme round />;
     };
 
     render() {
         const { navigate } = this.props.navigation;
         return (
             <View style={styles.top}>
-                <View style={{ height: screenHeight * 0.75 }}>
-
+                <View style={{ height: (screenHeight * 0.75) - Constants.statusBarHeight }}>
+                    
                 </View>
                 <View style={styles.bMenu}>
                     <View style={styles.bMenu}>
@@ -63,13 +73,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#F5FCFF',
         justifyContent: 'flex-end',
         alignItems: 'flex-end',
-    },
-
-    container: {
-        flex: 1,
-        backgroundColor: '#F5FCFF',
-        alignItems: 'center',
-        justifyContent: 'center',
     },
 
     mButtons: {

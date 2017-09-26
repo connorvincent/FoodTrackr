@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import {
     StyleSheet, Text, View, Image, Dimensions,
-    TouchableOpacity, AppRegistry, FlatList, ScrollView
+    TouchableOpacity, AppRegistry, StatusBar
 } from 'react-native';
 import { StackNavigator } from 'react-navigation';
+import { Constants,} from 'expo';
 
 var screenWidth = Dimensions.get('window').width;
 var screenHeight = Dimensions.get('window').height;
@@ -13,13 +14,17 @@ export default class InventoryScreen extends React.Component {
     static navigationOptions = {
         title: 'Inventory',
         headerLeft: null,
+        headerStyle: {
+            paddingTop: Constants.statusBarHeight,
+            height: 60 + Constants.statusBarHeight,
+        },
     };
 
     render() {
         const { navigate } = this.props.navigation;
         return (
             <View style={styles.top}>
-                <View style={{ height: screenHeight * 0.75 }}>
+                <View style={{ height: (screenHeight * 0.75) - Constants.statusBarHeight }}>
 
                 </View>
                 <View style={styles.bMenu}>
@@ -63,13 +68,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#F5FCFF',
         justifyContent: 'flex-end',
         alignItems: 'flex-end',
-    },
-
-    container: {
-        flex: 1,
-        backgroundColor: '#F5FCFF',
-        alignItems: 'center',
-        justifyContent: 'center',
     },
 
     mButtons: {
