@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
     StyleSheet, Text, View, Image, Dimensions,
-    TouchableOpacity, AppRegistry, Alert
+    TouchableOpacity, AppRegistry, Alert, FlatList
 } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import { Constants,} from 'expo';
@@ -10,7 +10,9 @@ var screenWidth = Dimensions.get('window').width;
 var screenHeight = Dimensions.get('window').height;
 
 export default class PlannerScreen extends React.Component {
-
+	constructor(props) {
+		super(props);
+	}
     static navigationOptions = {
         title: 'Planner',
         headerLeft: null,
@@ -20,12 +22,23 @@ export default class PlannerScreen extends React.Component {
         },
     };
 
+
     render() {
+		var menus = [
+			{key: "This is where the menus will appear when I can get them working. I am using the text as a placeholder so it doesn't throw an empty key error."}
+		];
         const { navigate } = this.props.navigation;
         return (
+			
             <View style={styles.top}>
                 <View style={{ height: (screenHeight * 0.75) - Constants.statusBarHeight }}>
-
+					<FlatList
+				data = {menus}
+				renderItem = {
+				({item}) => <Text>{item.key}</Text>
+				}
+				>
+				</FlatList>
                 </View>
                 <View style={styles.bMenu}>
                     <View style={styles.bMenu}>
