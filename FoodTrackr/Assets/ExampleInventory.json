@@ -1,0 +1,12 @@
+{
+  "title": "Your Item Inventory",
+  "description": "Your app fetched this from a remote endpoint!",
+  "inventoryItems": [
+    { "itemName": "Chicken", "timeLeft": "1 day"},
+    { "itemName": "Beef", "timeLeft": "1 day"},
+    { "itemName": "Wine", "timeLeft": "3 days fresh"},
+    { "itemName": "Tomato Sauce", "timeLeft": "5 days"},
+    { "itemName": "Pasta", "timeLeft": "3 months"},
+    { "itemName": "Honey", "timeLeft": "indefinite"}
+  ]
+}
