@@ -13,6 +13,7 @@ import GetScreen from './Get';
 
 var screenWidth = Dimensions.get('window').width;
 var screenHeight = Dimensions.get('window').height;
+Expo.ScreenOrientation.allow(Expo.ScreenOrientation.Orientation.PORTRAIT_UP);
 
 const navigate = StackNavigator({
     Inventory: { screen: InventoryScreen },
