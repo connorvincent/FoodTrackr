@@ -2,71 +2,58 @@ import React, { Component } from 'react';
 import {
     StyleSheet, Text, View, Image, Dimensions,
     TouchableOpacity, AppRegistry,
-    FlatList, TextInput, Keyboard
+    FlatList, TextInput, Keyboard, ActivityIndicator,
 } from 'react-native';
-import { List, ListItem } from 'react-native-elements';
+import { List, ListItem} from 'react-native-elements';
 import { StackNavigator } from 'react-navigation';
 import { Constants, } from 'expo';
 
 var screenWidth = Dimensions.get('window').width;
 var screenHeight = Dimensions.get('window').height;
-var searchInput = "";
+var easteregg = false;
 
 export default class RecipesScreen extends React.Component {
 
     static navigationOptions = {
         title: 'Recipes',
         headerLeft: null,
-        headerRight: <Text style={{
-            color: '#0000ff',
-            fontSize: 10,
-        }}>Powered By Food2Fork.com</Text>,
-        headerStyle: {
-            paddingTop: Constants.statusBarHeight,
-            height: 60 + Constants.statusBarHeight,
-            backgroundColor: '#99ccff'
-        },
+        headerRight: <Text style={{ color: '#0000ff', fontSize: 10, }}>Powered By Food2Fork.com</Text>,
+        headerStyle: { paddingTop: Constants.statusBarHeight, height: 60 + Constants.statusBarHeight, backgroundColor: '#99ccff' },
     };
 
     state = {
         text: '',
         data: [],
+        page: 1,
+        loading: false,
     };
 
-    componentWillMount() {
-        searchInput = "";
-        this.fetchData();
+    componentDidMount() {
+        this.search();
     }
 
-    storeText = (text) => {
-        searchInput = { text }
+    componentWillUpdate(prevProps, prevState) {
+        if (this.state.loading == false) {
+            this.setState({ loading: true });
+        }
     }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (this.state.loading == true) {
+            this.setState({ loading: false });
+        }
+    }
+
+    search = () => {
+        this.setState({ page: 1, data: [], });
+        this.fetchData();
+    };
 
     fetchData = async () => {
         Keyboard.dismiss()
-        var myRequest;
-        input = searchInput.text;
-        if (input != undefined) {
-            myRequest = "http://food2fork.com/api/search?key=c6bd8277327971ad694a7aed81d28e18&q=" + input;
-        }
-        else {
-            myRequest = "http://food2fork.com/api/search?key=c6bd8277327971ad694a7aed81d28e18&q=";
-        }
-
-        try {
-            const response = await fetch(myRequest);
-            const json = await response.json();
-            this.setState({ data: json.recipes });
-        }
-        catch (error) {
-            this.setState({
-                data: [{ "publisher": "Error fetching data", "title": "Error", "recipe_id": "error" }]
-            });
-            console.log("error");
-        }
-
-        /*easter egg*/{
-            if (input == "SELU CMPS" || input == "CMPS SELU" || input == "cmps selu" || input == "selu cmps") {
+        //easter egg
+        if (this.state.text == "SELU CMPS" || this.state.text == "CMPS SELU" || this.state.text == "cmps selu" || this.state.text == "selu cmps") {
+            easteregg = true;
                 this.setState({
                     data: [{ "publisher": "(985) 549-5099", "title": "Ghassan Alkadi", "recipe_id": "GhassanAlkadi", "f2f_url": "http://southeastern.edu/acad_research/depts/cs_it/faculty/images/ghassan.jpg", "image_url": "http://southeastern.edu/acad_research/depts/cs_it/faculty/images/ghassan.jpg" },
                     { "publisher": "(985) 549-2189", "title": "Lu Yuan", "recipe_id": "LuYuan", "image_url": "http://southeastern.edu/acad_research/depts/cs_it/faculty/images/luweb.jpg", "f2f_url": "http://southeastern.edu/acad_research/depts/cs_it/faculty/images/luweb.jpg" },
@@ -80,7 +67,8 @@ export default class RecipesScreen extends React.Component {
                     { "publisher": "(985) 549-5088", "title": "Kuo-Pao Yang", "recipe_id": "Kuo-PaoYang", "image_url": "http://southeastern.edu/acad_research/depts/cs_it/faculty/images/paoweb.jpg", "f2f_url": "http://southeastern.edu/acad_research/depts/cs_it/faculty/images/paoweb.jpg" }]
                 });
             }
-            else if (input == "tutors" || input == "Tutors" || input == "tutor" || input == "Tutor") {
+        else if (this.state.text == "tutors" || this.state.text == "Tutors" || this.state.text == "tutor" || this.state.text == "Tutor") {
+            easteregg = true;
                 this.setState({
                     data: [
                         { "publisher": "This is Joshua Wetzel", "title": "Joshua Wetzel", "recipe_id": "JoshuaWetzel", "image_url": "https://scontent.fbtr1-1.fna.fbcdn.net/v/t1.0-0/p110x80/10577110_707219412660765_636685016534560017_n.jpg?oh=cd6d57cb62c84c6d3d0a7775e8f4050c&oe=5A7B1627", "f2f_url": "https://scontent.fbtr1-1.fna.fbcdn.net/v/t1.0-0/p110x80/10577110_707219412660765_636685016534560017_n.jpg?oh=cd6d57cb62c84c6d3d0a7775e8f4050c&oe=5A7B1627" },
@@ -88,48 +76,51 @@ export default class RecipesScreen extends React.Component {
                         { "publisher": "Awful, just awful", "title": "Cory Clapp", "recipe_id": "CoryClapp", "image_url": "https://media.licdn.com/mpr/mpr/shrinknp_200_200/AAEAAQAAAAAAAAeoAAAAJGYzYjM5MmMyLWY3NzYtNDg5ZC1iMzk5LTIzY2Q3Y2UwZWEwNg.jpg", "f2f_url": "https://media.licdn.com/mpr/mpr/shrinknp_200_200/AAEAAQAAAAAAAAeoAAAAJGYzYjM5MmMyLWY3NzYtNDg5ZC1iMzk5LTIzY2Q3Y2UwZWEwNg.jpg" }]
                 });
             }
-            else if (input == "questions" || input == "?" || input == "questions?" || input == "Questions?" || input == "Questions") {
+        else if (this.state.text == "questions" || this.state.text == "?" || this.state.text == "questions?" || this.state.text == "Questions?" || this.state.text == "Questions") {
+            easteregg = true;
                 this.setState({
                     data: [{ "publisher": "I have a question", "title": "Cory Clapp", "recipe_id": "CoryClapp", "image_url": "https://media.licdn.com/mpr/mpr/shrinknp_200_200/AAEAAQAAAAAAAAeoAAAAJGYzYjM5MmMyLWY3NzYtNDg5ZC1iMzk5LTIzY2Q3Y2UwZWEwNg.jpg", "f2f_url": "https://www.google.com/maps/search/gun+store+app/@30.3120449,-90.990093,11z/data=!3m1!4b1" }]
                 });
             }
+        else {
+            easteregg = false; //end easter egg
+            var myRequest;
+            if (this.state.text != "undefined")
+                myRequest = `http://food2fork.com/api/search?key=c6bd8277327971ad694a7aed81d28e18&q=${this.state.text}&page=${this.state.page}`;
+            else
+                myRequest = `http://food2fork.com/api/search?key=c6bd8277327971ad694a7aed81d28e18&page=${this.state.page}`;
+            fetch(myRequest).then(results => results.json()).then(results => {
+                this.setState({ data: this.state.data.concat(results.recipes) });
+            });
         }
     }
+
+    handleEnd = () => {
+        if(this.state.loading == false)
+            this.setState(state => ({ loading: true, page: this.state.page + 1 }), () => this.fetchData());
+    };
 
     render() {
         const { navigate } = this.props.navigation;
         return (
-            <View style={{
-                flex: 1,
-                backgroundColor: '#e6eeff',
-                alignItems: 'flex-start',
-            }}>
-                <View style={
-                    {
-                        height: (screenWidth * 0.17) - Constants.statusBarHeight,
-                        flexDirection: 'row',
-                    }}>
-                    <TextInput
-                        style={{
-                            height: (screenWidth * 0.10),
-                            width: (screenWidth * 0.9),
-                        }}
+            <View style={{ flex: 1, backgroundColor: '#e6eeff', alignItems: 'flex-start', }}>
+                <View style={{height: (screenWidth * 0.17) - Constants.statusBarHeight, flexDirection: 'row', }}>
+                    <TextInput style={{ height: (screenWidth * 0.10), width: screenWidth, }}
                         placeholder="Search Recipes..."
-                        onChangeText={(text) => this.setState({ text }) & this.storeText(text)}
+                        onChangeText={(text) => this.setState({ text })}
                         value={this.state.text}
-                        onSubmitEditing={this.fetchData}
+                        onSubmitEditing={this.search}
                     />
-                    <TouchableOpacity onPress={this.fetchData}>
-                        <View style={styles.searchButton}>
-                            <Image source={require('./Assets/magnifier.png')} style={styles.magnifier} />
-                        </View>
-                    </TouchableOpacity>
                 </View>
                 <View style={{ flex: 1, width: (screenWidth), }}>
                     <List containerStyle={{ marginTop: 0 }}>
                         <FlatList
                             data={this.state.data}
+                            extraData={this.state}
                             keyExtractor={item => item.recipe_id}
+                            onEndReached={ this.state.loading ? null : () => this.handleEnd()}
+                            onEndReachedThreshold={0.1}
+                            ListFooterComponent={() => (this.state.loading || easteregg) ? null : <ActivityIndicator color='#FF9E24' size='large' animating />}
                             renderItem={({ item }) => (
                                 <TouchableOpacity onPress={() => navigate('Get', { f2f_url: item.f2f_url })}>
                                     <ListItem
@@ -143,14 +134,7 @@ export default class RecipesScreen extends React.Component {
                         />
                     </List>
                 </View>
-                <View style={{
-                    width: screenWidth,
-                    height: screenHeight * 0.15,
-                    flexDirection: 'row',
-                    backgroundColor: '#F5FCFF',
-                    justifyContent: 'flex-end',
-                    alignItems: 'flex-end',
-                }} >
+                <View style={{ width: screenWidth, height: screenHeight * 0.15, flexDirection: 'row', backgroundColor: '#F5FCFF', justifyContent: 'flex-end', alignItems: 'flex-end', }}>
                     <View style={styles.bMenu}>
                         <TouchableOpacity onPress={() => navigate('Inventory')}>
                             <Image source={require('./Assets/clipboard.png')} style={styles.mButtons} />
@@ -200,19 +184,4 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#99ccff',
     },
-    searchButton: {
-        width: screenWidth * 0.10,
-        height: screenWidth * 0.10,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#3399ff',
-        borderRadius: screenWidth * 0.075
-    },
-    magnifier: {
-        width: screenWidth * 0.075,
-        height: screenWidth * 0.075,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-
 });
