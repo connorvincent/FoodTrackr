@@ -1,52 +1,87 @@
 import React, { Component } from 'react';
 import {
     StyleSheet, Text, View, Image, Dimensions,
-    TouchableOpacity, AppRegistry, StatusBar
+    TouchableOpacity, AppRegistry, StatusBar,
+    FlatList, Alert, Button
 } from 'react-native';
 import { StackNavigator } from 'react-navigation';
-import { Constants,} from 'expo';
+import { Constants } from 'expo';
+import { List, ListItem } from 'react-native-elements';
 
 var screenWidth = Dimensions.get('window').width;
 var screenHeight = Dimensions.get('window').height;
+var Items = require('./Assets/ExampleInventory.json');
 
 export default class InventoryScreen extends React.Component {
 
-    static navigationOptions = {
+    navigationOptions = {
         title: 'Inventory',
         headerLeft: null,
         headerStyle: {
             paddingTop: Constants.statusBarHeight,
             height: 60 + Constants.statusBarHeight,
+            backgroundColor: '#99ccff'
         },
     };
+    
+    /*_onPress() {
+        Alert.alert('Will allow search for item.');
+    }*/
 
     render() {
         const { navigate } = this.props.navigation;
         return (
-            <View style={styles.top}>
-                <View style={{ height: (screenHeight * 0.75) - Constants.statusBarHeight }}>
-
+            <View style={{
+                flex: 1,
+                backgroundColor: '#e6eeff',
+                alignItems: 'flex-start',
+            }}>
+                
+                <View style={{ flex: 1, width: (screenWidth), }}>
+                    <List containerStyle={{ marginTop: 0 }}>
+                        <FlatList
+                            data={Items.inventoryItems}
+                            keyExtractor={item => item.itemName}
+                            renderItem={({ item }) => (
+                                //<TouchableOpacity onPress={this._onPress()}>
+                                    <ListItem
+                                        title={item.itemName}
+                                        subtitle={item.timeLeft}
+                                    />
+                                //</TouchableOpacity>
+                            )}
+                        />
+                    </List>
                 </View>
-                <View style={styles.bMenu}>
+                <View style={{
+                    width: screenWidth,
+                    height: screenHeight * 0.15,
+                    flexDirection: 'row',
+                    backgroundColor: '#F5FCFF',
+                    justifyContent: 'flex-end',
+                    alignItems: 'flex-end',
+                }} >
                     <View style={styles.bMenu}>
-                        <TouchableOpacity>
-                            <Image source={require('./Assets/clipboard.png')} style={styles.aButton} />
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.bMenu}>
-                        <TouchableOpacity onPress={() => navigate('Recipes')}>
-                            <Image source={require('./Assets/book.png')} style={styles.mButtons} />
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.bMenu}>
-                        <TouchableOpacity onPress={() => navigate('Planner')}>
-                            <Image source={require('./Assets/calendar.png')} style={styles.mButtons} />
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.bMenu}>
-                        <TouchableOpacity onPress={() => navigate('Settings')}>
-                            <Image source={require('./Assets/settings.png')} style={styles.mButtons} />
-                        </TouchableOpacity>
+                        <View style={styles.bMenu}>
+                            <TouchableOpacity>
+                                <Image source={require('./Assets/clipboard.png')} style={styles.aButton} />
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.bMenu}>
+                            <TouchableOpacity onPress={() => navigate('Recipes')}>
+                                <Image source={require('./Assets/book.png')} style={styles.mButtons} />
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.bMenu}>
+                            <TouchableOpacity onPress={() => navigate('Planner')}>
+                                <Image source={require('./Assets/calendar.png')} style={styles.mButtons} />
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.bMenu}>
+                            <TouchableOpacity onPress={() => navigate('Settings')}>
+                                <Image source={require('./Assets/settings.png')} style={styles.mButtons} />
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
             </View>
@@ -77,12 +112,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#FF9E24',
     },
+
     aButton: {
         width: screenWidth * 0.25,
         height: screenHeight * 0.15,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#D3D3D3',
+        backgroundColor: '#99ccff',
     },
 
 });
