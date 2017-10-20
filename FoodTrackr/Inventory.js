@@ -14,7 +14,7 @@ var Items = require('./Assets/ExampleInventory.json');
 
 export default class InventoryScreen extends React.Component {
 
-    navigationOptions = {
+    static navigationOptions = {
         title: 'Inventory',
         headerLeft: null,
         headerStyle: {
@@ -55,16 +55,16 @@ export default class InventoryScreen extends React.Component {
                 </View>
                 <View style={{
                     width: screenWidth,
-                    height: screenHeight * 0.15,
+                    height: screenHeight * 0.10,
                     flexDirection: 'row',
                     backgroundColor: '#F5FCFF',
                     justifyContent: 'flex-end',
                     alignItems: 'flex-end',
                 }} >
-                    <View style={styles.bMenu}>
+                    <View style={styles.aMenu}>
                         <View style={styles.bMenu}>
                             <TouchableOpacity>
-                                <Image source={require('./Assets/clipboard.png')} style={styles.aButton} />
+                                <Image source={require('./Assets/aClipboard.png')} style={styles.mButtons} />
                             </TouchableOpacity>
                         </View>
                         <View style={styles.bMenu}>
@@ -97,6 +97,15 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
     },
 
+    aMenu: {
+        height: screenHeight * 0.10,
+        width: screenWidth,
+        flexDirection: 'row',
+        backgroundColor: '#F5FCFF',
+        justifyContent: 'flex-end',
+        alignItems: 'flex-end',
+    },
+
     bMenu: {
         flex: 1,
         flexDirection: 'row',
@@ -107,18 +116,10 @@ const styles = StyleSheet.create({
 
     mButtons: {
         width: screenWidth * 0.25,
-        height: screenHeight * 0.15,
+        height: screenHeight * 0.10,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#FF9E24',
-    },
-
-    aButton: {
-        width: screenWidth * 0.25,
-        height: screenHeight * 0.15,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#99ccff',
     },
 
 });

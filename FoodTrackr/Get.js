@@ -30,7 +30,7 @@ export default class GetScreen extends React.Component {
     };
 
     componentWillMount() {
-        url = this.props.navigation.state.params.f2f_url;
+        url = this.props.navigation.state.params.source_url;
     }
 
     render() {

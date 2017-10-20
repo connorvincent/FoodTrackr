@@ -19,13 +19,13 @@ export default class RecipesScreen extends React.Component {
         }
     }
 
-
     static navigationOptions = {
         title: 'Settings',
         headerLeft: null,
         headerStyle: {
             paddingTop: Constants.statusBarHeight,
             height: 60 + Constants.statusBarHeight,
+            backgroundColor: '#99ccff'
         },
     };
 
@@ -58,7 +58,7 @@ export default class RecipesScreen extends React.Component {
 
 
 
-            <View style={styles.bMenu}>
+            <View style={styles.aMenu}>
                 <View style={styles.bMenu}>
                     <TouchableOpacity onPress={() => navigate('Inventory')}>
                         <Image source={require('./Assets/clipboard.png')} style={styles.mButtons} />
@@ -76,7 +76,7 @@ export default class RecipesScreen extends React.Component {
                 </View>
                 <View style={styles.bMenu}>
                     <TouchableOpacity>
-                        <Image source={require('./Assets/settings.png')} style={styles.aButton} />
+                        <Image source={require('./Assets/aSettings.png')} style={styles.mButtons} />
                     </TouchableOpacity>
                 </View>
             </View>
@@ -93,14 +93,29 @@ const styles = StyleSheet.create({
         marginTop: 100
     },
 
-
-    bMenu: {
-        flex: 0,
+    aMenu: {
+        height: screenHeight * 0.10,
+        width: screenWidth,
         flexDirection: 'row',
         backgroundColor: '#F5FCFF',
         justifyContent: 'flex-end',
         alignItems: 'flex-end',
-        height: screenHeight * 0.15,
+    },
+
+    bMenu: {
+        flex: 1,
+        flexDirection: 'row',
+        backgroundColor: '#F5FCFF',
+        justifyContent: 'flex-end',
+        alignItems: 'flex-end',
+    },
+
+    mButtons: {
+        width: screenWidth * 0.25,
+        height: screenHeight * 0.10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#FF9E24',
     },
 
     container: {
@@ -118,20 +133,6 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
     },
 
-    mButtons: {
-        width: screenWidth * 0.25,
-        height: screenHeight * 0.15,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#FF9E24',
-    },
-    aButton: {
-        width: screenWidth * 0.25,
-        height: screenHeight * 0.15,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#D3D3D3',
-    },
     buttonContainer: {
     backgroundColor: '#000000',
     borderRadius: 4,

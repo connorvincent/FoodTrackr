@@ -22,6 +22,7 @@ export default class PlannerScreen extends React.Component {
         headerStyle: {
             paddingTop: Constants.statusBarHeight,
             height: 60 + Constants.statusBarHeight,
+            backgroundColor: '#99ccff'
         },
     };
 
@@ -31,18 +32,15 @@ export default class PlannerScreen extends React.Component {
         const { navigate } = this.props.navigation;
         return (
             <View style={styles.top}>
-                <View style={{ height: (screenHeight * 0.75) - Constants.statusBarHeight }}>
-                </View>
 				<ScrollView style={styles.calendar}>
-					<Text style={styles.text}>Calendar with selectable date and arrows</Text>
 					<Calendar
-						 onDayPress={this.onDayPress}
-						 style={styles.calendar}
+					    onDayPress={this.onDayPress}
+						style={styles.calendar}
 						hideExtraDays
 						markedDates={{[this.state.selected]: {selected: true}}}
 					/>
-					</ScrollView>
-                <View style={styles.bMenu}>
+				</ScrollView>
+                <View style={styles.aMenu}>
                     <View style={styles.bMenu}>
                         <TouchableOpacity onPress={() => navigate('Inventory')}>
                             <Image source={require('./Assets/clipboard.png')} style={styles.mButtons} />
@@ -55,7 +53,7 @@ export default class PlannerScreen extends React.Component {
                     </View>
                     <View style={styles.bMenu}>
                         <TouchableOpacity>
-                            <Image source={require('./Assets/calendar.png')} style={styles.aButton} />
+                            <Image source={require('./Assets/aCalendar.png')} style={styles.mButtons} />
                         </TouchableOpacity>
                     </View>
                     <View style={styles.bMenu}>
@@ -78,8 +76,17 @@ const styles = StyleSheet.create({
 
     top: {
         flex: 1,
-        backgroundColor: '#F5FCFF',
+        backgroundColor: '#e6eeff',
         alignItems: 'flex-start',
+    },
+
+    aMenu: {
+        height: screenHeight * 0.10,
+        width: screenWidth,
+        flexDirection: 'row',
+        backgroundColor: '#F5FCFF',
+        justifyContent: 'flex-end',
+        alignItems: 'flex-end',
     },
 
     bMenu: {
@@ -92,24 +99,19 @@ const styles = StyleSheet.create({
 
     mButtons: {
         width: screenWidth * 0.25,
-        height: screenHeight * 0.15,
+        height: screenHeight * 0.10,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#FF9E24',
     },
-    aButton: {
-        width: screenWidth * 0.25,
-        height: screenHeight * 0.15,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#D3D3D3',
-    },
+    
 	calendar: {
 		borderTopWidth: 1,
-		paddingTop: 5,
+		paddingTop: 0,
 		borderBottomWidth: 1,
 		borderColor: '#eee',
-		height: 350
+        height: screenHeight - (60 + Constants.statusBarHeight) - (screenHeight*.10),
+        width: screenWidth
 	},
 	text: {
 		textAlign: 'center',
