@@ -11,12 +11,25 @@ var screenWidth = Dimensions.get('window').width;
 var screenHeight = Dimensions.get('window').height;
 
 export default class RecipesScreen extends React.Component {
-    constructor() {
-        super();
-        this.state = {
-            switch1Value: false,
-            switch2Value: false,
-        }
+
+    state = {
+        switchValue: false
+    };
+    state = {
+        switchValue2: true
+    };
+
+    //Switch Handlers
+    _handleToggleSwitch = () => this.setState(state => ({
+        switchValue: !state.switchValue
+    }));
+    _handleToggleSwitch2 = () => this.setState(state => ({
+        switchValue2: !state.switchValue2
+    }));
+
+    // About button handler
+    _onPress() {
+        Alert.alert('About Team B.A.C.K screen appears here');
     }
 
     static navigationOptions = {
@@ -29,34 +42,45 @@ export default class RecipesScreen extends React.Component {
         },
     };
 
-    _onPress() {
-        Alert.alert('About Team B.A.C.K screen appears here');
-    }
-    
-    _onPressLogout() {
-        Alert.alert('This will log out of account');
-    }
 
     render() {
         const { navigate } = this.props.navigation;
         return (
 
-           
+            <View style={{
+                flex: 1,
+                backgroundColor: '#e6eeff',
+            }}>
+
+                {/* Toggle Dark Theme */}
+                <View style={{ height: 50, flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Text style={{ fontSize: 25 }}>
+                        Toggle Dark Theme
+                    </Text>
+                    <Switch
+                        onValueChange={this._handleToggleSwitch}
+                        value={this.state.switchValue}
+                    />
+                </View>
 
 
-            
+                {/* Button for push notifications */}
+                <View style={{ height: 50, flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Text style={{ fontSize: 25 }}>
+                        Receive Push Notifications
+                </Text>
+                    <Switch
+                        onValueChange={this._handleToggleSwitch2}
+                        value={this.state.switchValue2}
+                    />
+                </View>
+
+                <View style={styles.buttonContainer}>
+                    <Button onPress={this._onPress} title="About Team B.A.C.K" color="#FFFFFF" accessibilityLabel="Tap on Me"/>
+                </View>
+
+               {/* Nav bar */}
                 <View style={styles.buttonLayout}>
-
-                <View style={styles.buttonContainer}>
-                    <Button onPress={this._onPress} title="About Team B.A.C.K" color="#000000" accessibilityLabel="Tap on Me"/>
-                </View>
-
-                <View style={styles.buttonContainer}>
-                    <Button onPress={this._onPressLogout} title="Logout" color="#000000" accessibilityLabel="Tap on Me"/>
-                </View>
-
-
-
 
             <View style={styles.aMenu}>
                 <View style={styles.bMenu}>
@@ -80,6 +104,7 @@ export default class RecipesScreen extends React.Component {
                     </TouchableOpacity>
                 </View>
             </View>
+                </View>
                 </View>
         );
     }
