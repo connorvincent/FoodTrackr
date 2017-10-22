@@ -183,7 +183,13 @@ export default class RecipesScreen extends React.Component {
 
     favorite = (item, index) => {
         AsyncStorage.getItem('favorites', (err, result) => {
-            AsyncStorage.setItem('favorites', JSON.stringify(JSON.parse(result).concat(item)));
+            if(result.startsWith('[{')) {
+                AsyncStorage.setItem('favorites', JSON.stringify(JSON.parse(result).concat(item)));
+            }
+            else
+            {
+                AsyncStorage.setItem('favorites', JSON.stringify([].concat(item)));
+            }
         })
     }
 
