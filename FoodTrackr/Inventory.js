@@ -14,16 +14,24 @@ var Items = require('./Assets/ExampleInventory.json');
 
 export default class InventoryScreen extends React.Component {
 
-    static navigationOptions = {
+    static navigationOptions = ({ navigation, screenProps }) => ({
         title: 'Inventory',
-        headerLeft: null,
+        headerLeft: (
+            <View style={{ height: screenWidth * 0.10, width: screenWidth * 0.10, backgroundColor: '#99ccff', justifyContent: 'center', alignItems: 'center', }}>
+                <TouchableOpacity onPress={() => navigation.navigate('AddItems')}>
+                    <View>
+                        <Image source={require('./Assets/addItems.png')} style={{ height: screenWidth * 0.10, width: screenWidth * 0.10, backgroundColor: '#99ccff', }}/>
+                    </View>
+                </TouchableOpacity>
+            </View>
+        ),
         headerStyle: {
             paddingTop: Constants.statusBarHeight,
             height: 60 + Constants.statusBarHeight,
             backgroundColor: '#99ccff'
         },
-    };
-    
+    });
+
     /*_onPress() {
         Alert.alert('Will allow search for item.');
     }*/
@@ -36,7 +44,7 @@ export default class InventoryScreen extends React.Component {
                 backgroundColor: '#e6eeff',
                 alignItems: 'flex-start',
             }}>
-                
+
                 <View style={{ flex: 1, width: (screenWidth), }}>
                     <List containerStyle={{ marginTop: 0 }}>
                         <FlatList
@@ -61,7 +69,7 @@ export default class InventoryScreen extends React.Component {
                     justifyContent: 'flex-end',
                     alignItems: 'flex-end',
                 }} >
-                    <View style={styles.aMenu}>
+                    <View style={styles.bMenu}>
                         <View style={styles.bMenu}>
                             <TouchableOpacity>
                                 <Image source={require('./Assets/aClipboard.png')} style={styles.mButtons} />
@@ -120,6 +128,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#FF9E24',
+    },
+
+    aButton: {
+        width: screenWidth * 0.25,
+        height: screenHeight * 0.15,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#99ccff',
     },
 
 });

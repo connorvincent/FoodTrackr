@@ -76,7 +76,7 @@ export default class RecipesScreen extends React.Component {
                 </View>
 
                 <View style={styles.buttonContainer}>
-                    <Button onPress={this._onPress} title="About Team B.A.C.K" color="#FFFFFF" accessibilityLabel="Tap on Me"/>
+                    <Button onPress={this._onPress} title="About Team B.A.C.K" color="#99ccff" accessibilityLabel="Tap on Me"/>
                 </View>
 
                {/* Nav bar */}

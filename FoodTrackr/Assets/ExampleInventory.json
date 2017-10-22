@@ -19,20 +19,20 @@
             "timeLeft": "5 days"
         },
         {
+            "itemName": "Turkey",
+            "timeLeft": "7 days"
+        },
+        {
+            "itemName": "Cereal",
+            "timeLeft": "1 month"
+        },
+        {
             "itemName": "Pasta",
             "timeLeft": "3 months"
         },
         {
             "itemName": "Honey",
             "timeLeft": "indefinite"
-        },
-        {
-            "itemName": "Turkey",
-            "timeLeft": "7 days"
-        },
-        {
-            "itemName": "Cereal",
-            "timeLeft": "1000000 days"
         }
     ]
 }

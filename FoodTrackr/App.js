@@ -11,6 +11,7 @@ import PlannerScreen from './Planner';
 import SettingsScreen from './Settings';
 import GetScreen from './Get';
 import FavoritesScreen from './Favorites';
+import AddItemsScreen from './AddItems';
 
 var screenWidth = Dimensions.get('window').width;
 var screenHeight = Dimensions.get('window').height;
@@ -23,6 +24,7 @@ const navigate = StackNavigator({
     Settings: { screen: SettingsScreen },
     Get: { screen: GetScreen },
     Favorites: { screen: FavoritesScreen },
+    AddItems: { screen: AddItemsScreen }
 }, {
         transitionConfig: () => ({
             transitionSpec: {
