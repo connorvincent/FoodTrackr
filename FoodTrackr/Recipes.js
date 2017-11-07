@@ -8,6 +8,7 @@ import Swipeout from 'react-native-swipeout';
 import { List, ListItem} from 'react-native-elements';
 import { StackNavigator } from 'react-navigation';
 import { Constants, } from 'expo';
+import EasterEgg from './EasterEgg';
 
 var screenWidth = Dimensions.get('window').width;
 var screenHeight = Dimensions.get('window').height;
@@ -38,6 +39,12 @@ export default class RecipesScreen extends React.Component {
         data: [],
         loading: false,
     };
+
+    componentWillMount() {
+        if(this.props.navigation.state.params.input) {
+            this.setState({ text: this.props.navigation.state.params.input });
+        }
+    }
 
     componentDidMount() {
         this.prevInput = this.state.text;
@@ -81,66 +88,10 @@ export default class RecipesScreen extends React.Component {
     fetchData = () => {
         Keyboard.dismiss()
         //easter egg
-        if (this.state.text == "SELU CMPS" || this.state.text == "CMPS SELU" || this.state.text == "cmps selu" || this.state.text == "selu cmps") {
+        if(EasterEgg.isEggs(this.state.text)) {
             easteregg = true;
-                this.setState({
-                    data: [{ "publisher": "(985) 549-5099", "title": "Ghassan Alkadi", "recipe_id": "GhassanAlkadi", 
-                    "source_url": "http://southeastern.edu/acad_research/depts/cs_it/faculty/images/ghassan.jpg", 
-                    "image_url": "http://southeastern.edu/acad_research/depts/cs_it/faculty/images/ghassan.jpg" },
-                    { "publisher": "(985) 549-2189", "title": "Lu Yuan", "recipe_id": "LuYuan", 
-                    "image_url": "http://southeastern.edu/acad_research/depts/cs_it/faculty/images/luweb.jpg", 
-                    "source_url": "http://southeastern.edu/acad_research/depts/cs_it/faculty/images/luweb.jpg" },
-                    { "publisher": "(985) 549-5314", "title": "John Burris", "recipe_id": "JohnBurris", 
-                    "image_url": "http://southeastern.edu/acad_research/depts/cs_it/faculty/images/burris_web.jpg", 
-                    "source_url": "http://southeastern.edu/acad_research/depts/cs_it/faculty/images/burris_web.jpg" },
-                    { "publisher": "(985) 549-2314", "title": "Mike Asoodeh", "recipe_id": "MikeAsoodeh", 
-                    "image_url": "http://southeastern.edu/acad_research/depts/cs_it/faculty/images/assodeh2.jpg", 
-                    "source_url": "http://southeastern.edu/acad_research/depts/cs_it/faculty/images/assodeh2.jpg" },
-                    { "publisher": "(985) 549-5315", "title": "Cris Koutsougeras", "recipe_id": "CrisKoutsougeras", 
-                    "image_url": "http://southeastern.edu/acad_research/depts/cs_it/faculty/images/crisweb.jpg", 
-                    "source_url": "http://southeastern.edu/acad_research/depts/cs_it/faculty/images/crisweb.jpg" },
-                    { "publisher": "(985) 549-5506", "title": "Patrick McDowell", "recipe_id": "PatrickMcDowell", 
-                    "image_url": "http://southeastern.edu/acad_research/depts/cs_it/faculty/images/mcdowell.jpg", 
-                    "source_url": "http://southeastern.edu/acad_research/depts/cs_it/faculty/images/mcdowell.jpg" },
-                    { "publisher": "(985) 549-5505", "title": "Steele Russell", "recipe_id": "Steele Russell", 
-                    "image_url": "http://southeastern.edu/acad_research/depts/cs_it/faculty/images/steeleweb.jpg", 
-                    "source_url": "http://southeastern.edu/acad_research/depts/cs_it/faculty/images/steeleweb.jpg" },
-                    { "publisher": "(985) 549-5105", "title": "Allanagh Sewell", "recipe_id": "AllanaghSewell", 
-                    "image_url": "http://southeastern.edu/acad_research/depts/cs_it/faculty/images/sewell1.jpg", 
-                    "source_url": "http://southeastern.edu/acad_research/depts/cs_it/faculty/images/sewell1.jpg" },
-                    { "publisher": "(985) 549-3769", "title": "Omer M. Soysal", "recipe_id": "OmerMSoysal", 
-                    "image_url": "http://southeastern.edu/acad_research/depts/cs_it/faculty/images/omer.jpg", 
-                    "source_url": "http://southeastern.edu/acad_research/depts/cs_it/faculty/images/omer.jpg" },
-                    { "publisher": "(985) 549-5088", "title": "Kuo-Pao Yang", "recipe_id": "Kuo-PaoYang", 
-                    "image_url": "http://southeastern.edu/acad_research/depts/cs_it/faculty/images/paoweb.jpg", 
-                    "source_url": "http://southeastern.edu/acad_research/depts/cs_it/faculty/images/paoweb.jpg" }]
-                });
-            }
-        else if (this.state.text == "tutors" || this.state.text == "Tutors" || this.state.text == "tutor" || this.state.text == "Tutor") {
-            easteregg = true;
-                this.setState({
-                    data: [
-                        { "publisher": "This is Joshua Wetzel", "title": "Joshua Wetzel", "recipe_id": "JoshuaWetzel", "image_url": 
-                        "https://scontent.fbtr1-1.fna.fbcdn.net/v/t1.0-0/p110x80/10577110_707219412660765_636685016534560017_n.jpg?oh=cd6d57cb62c84c6d3d0a7775e8f4050c&oe=5A7B1627", 
-                        "source_url": 
-                        "https://scontent.fbtr1-1.fna.fbcdn.net/v/t1.0-0/p110x80/10577110_707219412660765_636685016534560017_n.jpg?oh=cd6d57cb62c84c6d3d0a7775e8f4050c&oe=5A7B1627" },
-                        { "publisher": "Definitely not him", "title": "Not Joshua Wetzel", "recipe_id": "notJoshuaWetzel", "image_url": 
-                        "https://scontent.fbtr1-1.fna.fbcdn.net/v/t1.0-0/p110x80/10577110_707219412660765_636685016534560017_n.jpg?oh=cd6d57cb62c84c6d3d0a7775e8f4050c&oe=5A7B1627", 
-                        "source_url": 
-                        "https://scontent.fbtr1-1.fna.fbcdn.net/v/t1.0-0/p110x80/10577110_707219412660765_636685016534560017_n.jpg?oh=cd6d57cb62c84c6d3d0a7775e8f4050c&oe=5A7B1627" },
-                        { "publisher": "Awful, just awful", "title": "Cory Clapp", "recipe_id": "CoryClapp", "image_url": 
-                        "https://media.licdn.com/mpr/mpr/shrinknp_200_200/AAEAAQAAAAAAAAeoAAAAJGYzYjM5MmMyLWY3NzYtNDg5ZC1iMzk5LTIzY2Q3Y2UwZWEwNg.jpg", 
-                        "source_url": "https://media.licdn.com/mpr/mpr/shrinknp_200_200/AAEAAQAAAAAAAAeoAAAAJGYzYjM5MmMyLWY3NzYtNDg5ZC1iMzk5LTIzY2Q3Y2UwZWEwNg.jpg" }]
-                });
-            }
-        else if (this.state.text == "questions" || this.state.text == "?" || this.state.text == "questions?" || this.state.text == "Questions?" || this.state.text == "Questions") {
-            easteregg = true;
-                this.setState({
-                    data: [{ "publisher": "I have a question", "title": "Cory Clapp", "recipe_id": "CoryClapp", 
-                    "image_url": "https://media.licdn.com/mpr/mpr/shrinknp_200_200/AAEAAQAAAAAAAAeoAAAAJGYzYjM5MmMyLWY3NzYtNDg5ZC1iMzk5LTIzY2Q3Y2UwZWEwNg.jpg", 
-                    "source_url": "https://www.google.com/maps/search/gun+store+app/@30.3120449,-90.990093,11z/data=!3m1!4b1" }]
-                });
-            }
+            this.setState({ data: EasterEgg.getEggs(this.state.text) });
+        }
         else {
             easteregg = false; //end easter egg
             var myRequest = `http://food2fork.com/api/search?key=c6bd8277327971ad694a7aed81d28e18&q=${this.state.text}&page=${page}`;
@@ -244,30 +195,22 @@ export default class RecipesScreen extends React.Component {
                 <View style={{ width: screenWidth, height: screenHeight * 0.10, flexDirection: 'row', backgroundColor: '#F5FCFF', justifyContent: 'flex-end', alignItems: 'flex-end', }}>
                     <View style={styles.bMenu}>
                         <TouchableOpacity onPress={() => navigate('Inventory')} >
-                            <View>
                                 <Image source={require('./Assets/clipboard.png')} style={styles.mButtons} />
-                            </View>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.bMenu}>
                         <TouchableOpacity>
-                            <View>
                                 <Image source={require('./Assets/aBook.png')} style={styles.mButtons} />
-                            </View>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.bMenu}>
                         <TouchableOpacity onPress={() => navigate('Planner')}>
-                            <View>
                                 <Image source={require('./Assets/calendar.png')} style={styles.mButtons} />
-                            </View>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.bMenu}>
                         <TouchableOpacity onPress={() => navigate('Settings')}>
-                            <View>
                                 <Image source={require('./Assets/settings.png')} style={styles.mButtons} />
-                            </View>
                         </TouchableOpacity>
                     </View>
                 </View>

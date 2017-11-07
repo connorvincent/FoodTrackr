@@ -32,9 +32,9 @@ export default class InventoryScreen extends React.Component {
         },
     });
 
-    /*_onPress() {
-        Alert.alert('Will allow search for item.');
-    }*/
+    _onPress(navigate, itemName) {
+        navigate('Recipes', { input: `${itemName}` });
+    }
 
     render() {
         const { navigate } = this.props.navigation;
@@ -51,12 +51,12 @@ export default class InventoryScreen extends React.Component {
                             data={Items.inventoryItems}
                             keyExtractor={item => item.itemName}
                             renderItem={({ item }) => (
-                                //<TouchableOpacity onPress={this._onPress()}>
+                                <TouchableOpacity onPress={() => this._onPress(navigate, item.itemName)}>
                                     <ListItem
                                         title={item.itemName}
                                         subtitle={item.timeLeft}
                                     />
-                                //</TouchableOpacity>
+                                </TouchableOpacity>
                             )}
                         />
                     </List>
@@ -76,7 +76,7 @@ export default class InventoryScreen extends React.Component {
                             </TouchableOpacity>
                         </View>
                         <View style={styles.bMenu}>
-                            <TouchableOpacity onPress={() => navigate('Recipes')}>
+                            <TouchableOpacity onPress={() => navigate('Recipes', { input: "" })}>
                                 <Image source={require('./Assets/book.png')} style={styles.mButtons} />
                             </TouchableOpacity>
                         </View>

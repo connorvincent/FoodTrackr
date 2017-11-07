@@ -62,7 +62,7 @@ export default class PlannerScreen extends React.Component {
                         </TouchableOpacity>
                     </View>
                     <View style={styles.bMenu}>
-                        <TouchableOpacity onPress={() => navigate('Recipes')}>
+                        <TouchableOpacity onPress={() => navigate('Recipes', { input: "" })}>
                             <Image source={require('./Assets/book.png')} style={styles.mButtons} />
                         </TouchableOpacity>
                     </View>
