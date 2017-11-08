@@ -36,24 +36,15 @@ export default class PlannerScreen extends React.Component {
             <View style={styles.container}>
 					<Agenda
 						items={this.state.items}
-						//loadItemsForMonth={this.loadItems.bind(this)}
+						loadItemsForMonth={this.loadItems}
 						markedDates={{[this.state.selected]: {selected: true}}}
-						//renderItem={this.renderItem.bind(this)}
-						//renderEmptyDate={this.renderEmptyDate.bind(this)}
-						//rowHasChanged={this.rowHasChanged.bind(this)}
-						//markingType={'interactive'}
-						//markedDates={{
-						//  '2017-05-08': [{textColor: '#666'}],
-						//  '2017-05-09': [{textColor: '#666'}],
-						//  '2017-05-14': [{startingDay: true, color: 'blue'}, {endingDay: true, color: 'blue'}],
-						//  '2017-05-21': [{startingDay: true, color: 'blue'}],
-						//  '2017-05-22': [{endingDay: true, color: 'gray'}],
-						//  '2017-05-24': [{startingDay: true, color: 'gray'}],
-						//  '2017-05-25': [{color: 'gray'}],
-						//  '2017-05-26': [{endingDay: true, color: 'gray'}]}}
-						// monthFormat={'yyyy'}
-						// theme={{calendarBackground: 'red', agendaKnobColor: 'green'}}
-						//renderDay={(day, item) => (<Text>{day ? day.day: 'item'}</Text>)}
+						renderItem={this.renderItem}
+						renderEmptyDate={this.renderEmptyDate}
+						rowHasChanged={this.rowHasChanged}
+						markingType={'interactive'}
+						theme={{calendarBackground: 'white', agendaTodayColor: '#e6eeff', agendaKnobColor: '#99ccff'}}
+						renderDay={(day, item) => (<Text>{day ? day.day: 'item'}</Text>)}
+
 					/>
                 <View style={styles.aMenu}>
                     <View style={styles.bMenu}>
