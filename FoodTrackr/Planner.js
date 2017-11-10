@@ -13,6 +13,11 @@ var screenHeight = Dimensions.get('window').height;
 export default class PlannerScreen extends React.Component {
 	constructor(props) {
 		super(props);
+		
+		this.loadItems = this.loadItems.bind(this)
+		this.renderItem = this.loadItems.bind(this)
+		this.renderEmptyDate=this.renderEmptyDate.bind(this)
+		this.rowHasChanged=this.rowHasChanged.bind(this)
 		this.state = {
 		items: {}
 		};
@@ -28,14 +33,58 @@ export default class PlannerScreen extends React.Component {
         },
     };
 
+	loadItems(day) {
+    setTimeout(() => {
+      for (let i = -15; i < 85; i++) {
+        const time = day.timestamp + i * 24 * 60 * 60 * 1000;
+        const strTime = this.timeToString(time);
+        if (!this.state.items[strTime]) {
+          this.state.items[strTime] = [];
+          const numItems = Math.floor(Math.random() * 5);
+          for (let j = 0; j < numItems; j++) {
+            this.state.items[strTime].push({
+              name: 'Item for ' + strTime,
+              height: Math.max(50, Math.floor(Math.random() * 150))
+            });
+          }
+        }
+      }
+      
+      const newItems = {};
+      Object.keys(this.state.items).forEach(key => {newItems[key] = this.state.items[key];});
+      this.setState({
+        items: newItems
+      });
+    }, 1000);
+    // console.log(`Load Items for ${day.year}-${day.month}`);
+  }
+   renderItem(item) {
+    return (
+      <View style={[styles.item, {height: item.height}]}><Text>{item.name}</Text></View>
+    );
+  }
 
+ renderEmptyDate() {
+    return (
+      <View style={styles.emptyDate}></View>
+    );
+  }
+
+rowHasChanged(r1, r2) {
+    return r1.name !== r2.name;
+  }
+
+timeToString(time) {
+    const date = new Date(time);
+    return date.toISOString().split(" ")[0];
+  }
     render() {
 		
         const { navigate } = this.props.navigation;
         return (
             <View style={styles.container}>
 					<Agenda
-						items={this.state.items}
+						items={{'2017-11-10':[]}}
 						loadItemsForMonth={this.loadItems}
 						markedDates={{[this.state.selected]: {selected: true}}}
 						renderItem={this.renderItem}
@@ -44,6 +93,8 @@ export default class PlannerScreen extends React.Component {
 						markingType={'interactive'}
 						theme={{calendarBackground: 'white', agendaTodayColor: '#e6eeff', agendaKnobColor: '#99ccff'}}
 						renderDay={(day, item) => (<Text>{day ? day.day: 'item'}</Text>)}
+						markedDates={{'2017-11-10': [{textColor:'#666'}]}}
+						
 
 					/>
                 <View style={styles.aMenu}>
@@ -72,52 +123,6 @@ export default class PlannerScreen extends React.Component {
         );
     }
 }
-  function loadItems(day) {
-    setTimeout(() => {
-      for (let i = -15; i < 85; i++) {
-        const time = day.timestamp + i * 24 * 60 * 60 * 1000;
-        const strTime = this.timeToString(time);
-        if (!this.state.items[strTime]) {
-          this.state.items[strTime] = [];
-          const numItems = Math.floor(Math.random() * 5);
-          for (let j = 0; j < numItems; j++) {
-            this.state.items[strTime].push({
-              name: 'Item for ' + strTime,
-              height: Math.max(50, Math.floor(Math.random() * 150))
-            });
-          }
-        }
-      }
-      //console.log(this.state.items);
-      const newItems = {};
-      Object.keys(this.state.items).forEach(key => {newItems[key] = this.state.items[key];});
-      this.setState({
-        items: newItems
-      });
-    }, 1000);
-    // console.log(`Load Items for ${day.year}-${day.month}`);
-  }
-
-  function renderItem(item) {
-    return (
-      <View style={[styles.item, {height: item.height}]}><Text>{item.name}</Text></View>
-    );
-  }
-
-  function renderEmptyDate() {
-    return (
-      <View style={styles.emptyDate}><Text>This is empty date!</Text></View>
-    );
-  }
-
-  function rowHasChanged(r1, r2) {
-    return r1.name !== r2.name;
-  }
-
-  function timeToString(time) {
-    const date = new Date(time);
-    return date.toISOString().split('T')[0];
-  }
 
 
 const styles = StyleSheet.create({
@@ -174,7 +179,7 @@ const styles = StyleSheet.create({
         width: screenWidth
 	},
 	item: {
-    backgroundColor: 'white',
+    backgroundColor: 'black',
     flex: 1,
     borderRadius: 5,
     padding: 10,
