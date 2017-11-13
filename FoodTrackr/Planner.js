@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import {
     StyleSheet, Text, View, Image, Dimensions,
-    TouchableOpacity, AppRegistry, Alert, ScrollView
+    TouchableOpacity, AppRegistry, Alert, ScrollView,
+	Button, Switch, StatusBar
 } from 'react-native';
-import {Calendar, CalendarList, Agenda} from 'react-native-calendars'
+import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
+import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
 import { StackNavigator } from 'react-navigation';
 import { Constants,} from 'expo';
 
@@ -13,14 +15,17 @@ var screenHeight = Dimensions.get('window').height;
 export default class PlannerScreen extends React.Component {
 	constructor(props) {
 		super(props);
-		
 		this.loadItems = this.loadItems.bind(this)
 		this.renderItem = this.loadItems.bind(this)
 		this.renderEmptyDate=this.renderEmptyDate.bind(this)
 		this.rowHasChanged=this.rowHasChanged.bind(this)
+
 		this.state = {
 		items: {}
 		};
+    }
+	_onPress() {
+        Alert.alert('This button will allow you to add recipes to your Planner');
 		
 	}
     static navigationOptions = {
@@ -66,7 +71,12 @@ export default class PlannerScreen extends React.Component {
 
  renderEmptyDate() {
     return (
-      <View style={styles.emptyDate}></View>
+	<View>
+        <Table>
+          <Row data={tableHead} style={styles.head} textStyle={styles.text}/>
+          <Rows data={tableData} style={styles.row} textStyle={styles.text}/>
+        </Table>
+    </View>
     );
   }
 
@@ -81,10 +91,15 @@ timeToString(time) {
     render() {
 		
         const { navigate } = this.props.navigation;
+		const tableHead = ['Breakfast', 'Lunch', ' Supper'];
+		const tableData = [
+      ['1', '2', '3', '4'],
+	  ]
         return (
+
             <View style={styles.container}>
 					<Agenda
-						items={{'2017-11-10':[]}}
+						items={{}}
 						loadItemsForMonth={this.loadItems}
 						markedDates={{[this.state.selected]: {selected: true}}}
 						renderItem={this.renderItem}
@@ -93,10 +108,13 @@ timeToString(time) {
 						markingType={'interactive'}
 						theme={{calendarBackground: 'white', agendaTodayColor: '#e6eeff', agendaKnobColor: '#99ccff'}}
 						renderDay={(day, item) => (<Text>{day ? day.day: 'item'}</Text>)}
-						markedDates={{'2017-11-10': [{textColor:'#666'}]}}
+						
 						
 
 					/>
+					<View style={styles.buttonContainer}>
+						<Button onPress={this._onPress} title="Add Recipe" color="#000000" accessibilityLabel="Tap on Me"/>
+					</View>
                 <View style={styles.aMenu}>
                     <View style={styles.bMenu}>
                         <TouchableOpacity onPress={() => navigate('Inventory')}>
@@ -190,6 +208,21 @@ const styles = StyleSheet.create({
     height: 60,
     flex:1,
     paddingTop: 30
-}
+	},
+	 buttonContainer: {
+    backgroundColor: '#99ccff',
+    borderRadius: 4,
+    padding: 1,
+    shadowColor: '#FF9E24',
+    shadowOffset: {
+      width: 0,
+      height: 1
+    },
+    shadowRadius: 10,
+    shadowOpacity: 0.25
+  },
+  head: { height: 40, backgroundColor: '#f1f8ff' },
+  text: { marginLeft: 5 },
+  row: { height: 30 }
 
 });
