@@ -5,7 +5,7 @@ import {
 	Button, Switch, StatusBar
 } from 'react-native';
 import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
-import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
+import { Table, SimpleCell} from 'react-native-easy-table';
 import { StackNavigator } from 'react-navigation';
 import { Constants,} from 'expo';
 
@@ -71,12 +71,7 @@ export default class PlannerScreen extends React.Component {
 
  renderEmptyDate() {
     return (
-	<View>
-        <Table>
-          <Row data={tableHead} style={styles.head} textStyle={styles.text}/>
-          <Rows data={tableData} style={styles.row} textStyle={styles.text}/>
-        </Table>
-    </View>
+	<View style = {styles.emptyDate}/>
     );
   }
 
@@ -89,32 +84,29 @@ timeToString(time) {
     return date.toISOString().split(" ")[0];
   }
     render() {
-		
-        const { navigate } = this.props.navigation;
-		const tableHead = ['Breakfast', 'Lunch', ' Supper'];
-		const tableData = [
-      ['1', '2', '3', '4'],
-	  ]
+		const { navigate } = this.props.navigation;
         return (
-
-            <View style={styles.container}>
-					<Agenda
-						items={{}}
-						loadItemsForMonth={this.loadItems}
-						markedDates={{[this.state.selected]: {selected: true}}}
-						renderItem={this.renderItem}
-						renderEmptyDate={this.renderEmptyDate}
-						rowHasChanged={this.rowHasChanged}
-						markingType={'interactive'}
-						theme={{calendarBackground: 'white', agendaTodayColor: '#e6eeff', agendaKnobColor: '#99ccff'}}
-						renderDay={(day, item) => (<Text>{day ? day.day: 'item'}</Text>)}
-						
-						
-
+			<View style = {styles.container}>
+				<Agenda
+					items={{}}
+					loadItemsForMonth={this.loadItems}
+					markedDates={{[this.state.selected]: {selected: true}}}
+					renderItem={this.renderItem}
+					renderEmptyDate={this.renderEmptyDate}
+					rowHasChanged={this.rowHasChanged}
+					markingType={'interactive'}
+					theme={{calendarBackground: 'white', agendaTodayColor: '#e6eeff', agendaKnobColor: '#99ccff'}}
+					renderDay={(day, item) => (<Text>{day ? day.day: 'item'}</Text>)}
 					/>
 					<View style={styles.buttonContainer}>
-						<Button onPress={this._onPress} title="Add Recipe" color="#000000" accessibilityLabel="Tap on Me"/>
+						<Button onPress={this._onPress} title="Add Breakfast Item" color="#000000" accessibilityLabel="Tap on Me"/>
 					</View>
+					<View style ={styles.buttonContainer}>
+						<Button onPress ={this._onPress} title ="Add Lunch Item" color="#000000" accessibilityLabel="Tap on Me"/>
+						</View>
+					<View style ={styles.buttonContainer}>
+						<Button onPress={this._onPress} title="Add Supper Item" color="#000000" accessibilityLabel="Tap on Me"/>
+						</View>
                 <View style={styles.aMenu}>
                     <View style={styles.bMenu}>
                         <TouchableOpacity onPress={() => navigate('Inventory')}>
@@ -220,9 +212,6 @@ const styles = StyleSheet.create({
     },
     shadowRadius: 10,
     shadowOpacity: 0.25
-  },
-  head: { height: 40, backgroundColor: '#f1f8ff' },
-  text: { marginLeft: 5 },
-  row: { height: 30 }
+  }
 
 });
