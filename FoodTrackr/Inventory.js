@@ -7,6 +7,7 @@ import {
 import { StackNavigator } from 'react-navigation';
 import { Constants } from 'expo';
 import { List, ListItem } from 'react-native-elements';
+import { CheckBox } from 'react-native-elements';
 
 var screenWidth = Dimensions.get('window').width;
 var screenHeight = Dimensions.get('window').height;
@@ -32,8 +33,37 @@ export default class InventoryScreen extends React.Component {
         },
     });
 
-    _onPress(navigate, itemName) {
-        navigate('Recipes', { input: `${itemName}` });
+    constructor(props) {
+        super(props);
+        this.state = {
+            checkedItems: [],
+        }
+    }
+
+    componentWillMount() {
+        var checkedItems = [];
+        for (i = 0; i < Items.inventoryItems.length; i++) {
+            checkedItems = checkedItems.concat([null]);
+        }
+        this.setState({ checkedItems: checkedItems,})
+    }
+
+    search = (navigate) => {
+        var request = '';
+        for (i = 0; i < Items.inventoryItems.length; i++) {
+            if(this.state.checkedItems[i] != null) {
+                request += this.state.checkedItems[i] + ', ';
+            }
+        }
+        request = request.slice(0, -2); //remove last 2 characters
+        navigate('Recipes', { input: `${request}` });
+    }
+
+    check = (item, index) => {
+        var checked = this.state.checkedItems[index] != null;
+        var newCheckedItems = this.state.checkedItems;
+        !checked ? newCheckedItems.splice(index, 1, item.itemName) : newCheckedItems.splice(index, 1, null)
+        this.setState({ checkedItems: newCheckedItems})
     }
 
     render() {
@@ -44,19 +74,27 @@ export default class InventoryScreen extends React.Component {
                 backgroundColor: '#e6eeff',
                 alignItems: 'flex-start',
             }}>
-
+                <TouchableOpacity onPress={() => this.search(navigate)} style={styles.search}>
+                    <Text style={{ color: '#0000ff', fontSize: 10, alignSelf: 'center' }}>Search Recipes</Text>
+                </TouchableOpacity>
                 <View style={{ flex: 1, width: (screenWidth), }}>
                     <List containerStyle={{ marginTop: 0 }}>
                         <FlatList
                             data={Items.inventoryItems}
-                            keyExtractor={item => item.itemName}
-                            renderItem={({ item }) => (
-                                <TouchableOpacity onPress={() => this._onPress(navigate, item.itemName)}>
-                                    <ListItem
-                                        title={item.itemName}
-                                        subtitle={item.timeLeft}
-                                    />
-                                </TouchableOpacity>
+                            extraData={this.state}
+                            keyExtractor={(x, i) => i}
+                            renderItem={({ item, index}) => (
+                                <ListItem
+                                    title={item.itemName}
+                                    subtitle={item.timeLeft}
+                                    rightIcon={
+                                        <TouchableOpacity onPress={() => this.check(item, index)}>
+                                            <Image source={this.state.checkedItems[index] != null ?
+                                                require('./Assets/check_box.png') : require('./Assets/check_box_outline.png')}
+                                                style={{ backgroundColor: '#99ccff', }} />
+                                        </TouchableOpacity>
+                                    }
+                                />
                             )}
                         />
                     </List>
@@ -103,6 +141,14 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#F5FCFF',
         alignItems: 'flex-start',
+    },
+
+    search: {
+        backgroundColor: '#d3d3d3', 
+        height: screenHeight * 0.05, 
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: screenWidth,
     },
 
     aMenu: {

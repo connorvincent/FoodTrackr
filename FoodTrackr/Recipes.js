@@ -182,6 +182,7 @@ export default class RecipesScreen extends React.Component {
                                                         avatar={{ uri: item.image_url }}
                                                         title={item.title}
                                                         subtitle={item.publisher}
+                                                        hideChevron={true}
                                                     />
                                                 </View>
                                             </TouchableHighlight>
