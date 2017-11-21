@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import Swipeout from 'react-native-swipeout';
 import { List, ListItem} from 'react-native-elements';
-import { StackNavigator } from 'react-navigation';
+import { StackNavigator, NavigationActions } from 'react-navigation';
 import { Constants, } from 'expo';
 
 var screenWidth = Dimensions.get('window').width;
@@ -34,6 +34,21 @@ export default class FavoritesScreen extends React.Component {
             AsyncStorage.setItem('favorites', JSON.stringify(copy));
     }
 
+    onItemPress = (navigate, item) => {
+        if (!this.props.navigation.state.params.redirectToPlanner) {
+            navigate('Get', { source_url: item.source_url })
+        }
+        else {
+            const resetAction = NavigationActions.reset({
+                index: 0,
+                actions: [
+                    NavigationActions.navigate({ routeName: 'Planner', params: { item: `${JSON.stringify(item)}` }, })
+                ]
+            });
+            this.props.navigation.dispatch(resetAction);
+        }
+    }
+
     render() {
         const { navigate } = this.props.navigation;
         return (
@@ -53,7 +68,7 @@ export default class FavoritesScreen extends React.Component {
                                     }];
                                     return (
                                         <Swipeout right={swipeoutBtns} autoClose={true} backgroundColor='transparent'>
-                                            <TouchableHighlight onPress={() => navigate('Get', { source_url: item.source_url })} underlayColor='#ffb366'>
+                                            <TouchableHighlight onPress={() => this.onItemPress(navigate, item)} underlayColor='#ffb366'>
                                                 <View>
                                                     <ListItem
                                                         roundAvatar

@@ -4,10 +4,9 @@ import {
     TouchableOpacity, AppRegistry, StatusBar,
     FlatList, Alert, Button
 } from 'react-native';
-import { StackNavigator } from 'react-navigation';
+import { StackNavigator, NavigationActions } from 'react-navigation';
 import { Constants } from 'expo';
 import { List, ListItem } from 'react-native-elements';
-import { CheckBox } from 'react-native-elements';
 
 var screenWidth = Dimensions.get('window').width;
 var screenHeight = Dimensions.get('window').height;
@@ -15,23 +14,36 @@ var Items = require('./Assets/ExampleInventory.json');
 
 export default class InventoryScreen extends React.Component {
 
-    static navigationOptions = ({ navigation, screenProps }) => ({
-        title: 'Inventory',
-        headerLeft: (
-            <View style={{ height: screenWidth * 0.10, width: screenWidth * 0.10, backgroundColor: '#99ccff', justifyContent: 'center', alignItems: 'center', }}>
-                <TouchableOpacity onPress={() => navigation.navigate('AddItems')}>
-                    <View>
-                        <Image source={require('./Assets/addItems.png')} style={{ height: screenWidth * 0.10, width: screenWidth * 0.10, backgroundColor: '#99ccff', }}/>
-                    </View>
-                </TouchableOpacity>
-            </View>
-        ),
-        headerStyle: {
-            paddingTop: Constants.statusBarHeight,
-            height: 60 + Constants.statusBarHeight,
-            backgroundColor: '#99ccff'
-        },
-    });
+    static navigationOptions = ({ navigation, state }) => {
+        const { params = {} } = navigation.state;
+        return {
+            title: 'Inventory',
+            headerLeft: (
+                <View style={{ height: screenWidth * 0.10, width: screenWidth * 0.10, backgroundColor: '#99ccff', justifyContent: 'center', alignItems: 'center', }}>
+                    <TouchableOpacity onPress={() => navigation.navigate('AddItems')}>
+                        <View>
+                            <Image source={require('./Assets/addItems.png')} style={{ height: screenWidth * 0.10, width: screenWidth * 0.10, backgroundColor: '#99ccff', }} />
+                        </View>
+                    </TouchableOpacity>
+                </View>
+            ),
+            headerRight: (
+                <View style={{ height: screenWidth * 0.10, width: screenWidth * 0.10, backgroundColor: '#99ccff', justifyContent: 'center', alignItems: 'center', }}>
+                    <TouchableOpacity onPress={() => params.handleThis(navigation.navigate) }>
+                        <View>
+                            <Image source={require('./Assets/magnifier.png')} style={{ height: screenWidth * 0.10, width: screenWidth * 0.10, backgroundColor: '#99ccff', }} />
+                        </View>
+                    </TouchableOpacity>
+                </View>
+            ),
+            headerStyle: {
+                paddingTop: Constants.statusBarHeight,
+                height: 60 + Constants.statusBarHeight,
+                backgroundColor: '#99ccff'
+            },
+            gesturesEnabled: false,
+        }
+    };
 
     constructor(props) {
         super(props);
@@ -40,7 +52,10 @@ export default class InventoryScreen extends React.Component {
         }
     }
 
-    componentWillMount() {
+    componentDidMount() {
+        this.props.navigation.setParams({
+            handleThis: this.search
+        });
         var checkedItems = [];
         for (i = 0; i < Items.inventoryItems.length; i++) {
             checkedItems = checkedItems.concat([null]);
@@ -74,9 +89,6 @@ export default class InventoryScreen extends React.Component {
                 backgroundColor: '#e6eeff',
                 alignItems: 'flex-start',
             }}>
-                <TouchableOpacity onPress={() => this.search(navigate)} style={styles.search}>
-                    <Text style={{ color: '#0000ff', fontSize: 10, alignSelf: 'center' }}>Search Recipes</Text>
-                </TouchableOpacity>
                 <View style={{ flex: 1, width: (screenWidth), }}>
                     <List containerStyle={{ marginTop: 0 }}>
                         <FlatList
@@ -114,17 +126,44 @@ export default class InventoryScreen extends React.Component {
                             </TouchableOpacity>
                         </View>
                         <View style={styles.bMenu}>
-                            <TouchableOpacity onPress={() => navigate('Recipes', { input: "" })}>
+                            <TouchableOpacity onPress={() => {
+                                const resetAction = NavigationActions.reset({
+                                    index: 0,
+                                    actions: [
+                                        NavigationActions.navigate({ routeName: 'Recipes', params: { input: "", redirectToPlanner: "" } })
+                                    ]
+                                });
+
+                                this.props.navigation.dispatch(resetAction);
+                            }}>
                                 <Image source={require('./Assets/book.png')} style={styles.mButtons} />
                             </TouchableOpacity>
                         </View>
                         <View style={styles.bMenu}>
-                            <TouchableOpacity onPress={() => navigate('Planner')}>
+                            <TouchableOpacity onPress={() => {
+                                const resetAction = NavigationActions.reset({
+                                    index: 0,
+                                    actions: [
+                                        NavigationActions.navigate({ routeName: 'Planner', params: { item: ""} })
+                                    ]
+                                });
+
+                                this.props.navigation.dispatch(resetAction);
+                            }}>
                                 <Image source={require('./Assets/calendar.png')} style={styles.mButtons} />
                             </TouchableOpacity>
                         </View>
                         <View style={styles.bMenu}>
-                            <TouchableOpacity onPress={() => navigate('Settings')}>
+                            <TouchableOpacity onPress={() => {
+                                const resetAction = NavigationActions.reset({
+                                    index: 0,
+                                    actions: [
+                                        NavigationActions.navigate({ routeName: 'Settings', params: {}, })
+                                    ]
+                                });
+
+                                this.props.navigation.dispatch(resetAction);
+                            }}>
                                 <Image source={require('./Assets/settings.png')} style={styles.mButtons} />
                             </TouchableOpacity>
                         </View>

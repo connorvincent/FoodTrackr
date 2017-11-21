@@ -59,8 +59,8 @@ let EasterEgg = {
             "https://media.licdn.com/mpr/mpr/shrinknp_200_200/AAEAAQAAAAAAAAeoAAAAJGYzYjM5MmMyLWY3NzYtNDg5ZC1iMzk5LTIzY2Q3Y2UwZWEwNg.jpg", 
             "source_url": "https://media.licdn.com/mpr/mpr/shrinknp_200_200/AAEAAQAAAAAAAAeoAAAAJGYzYjM5MmMyLWY3NzYtNDg5ZC1iMzk5LTIzY2Q3Y2UwZWEwNg.jpg" },
             { "publisher": "He prefers backend development", "title": "Michael Hutto", "recipe_id": "MichaelHutto", "image_url": 
-            "https://scontent.fbtr1-1.fna.fbcdn.net/v/t1.0-9/1004605_627374650607093_1434297889_n.jpg?oh=182e7401a5b9fc54eb13ec859d2c28e0&oe=5A64008A", 
-            "source_url": "https://scontent.fbtr1-1.fna.fbcdn.net/v/t1.0-9/1004605_627374650607093_1434297889_n.jpg?oh=182e7401a5b9fc54eb13ec859d2c28e0&oe=5A64008A" }]
+            "https://scontent-dft4-2.xx.fbcdn.net/v/t1.0-9/377931_490996110911615_1972897439_n.jpg?oh=897376560e6b70b6a22512fbdd6994e5&oe=5AAC03C7", 
+            "source_url": "https://scontent-dft4-2.xx.fbcdn.net/v/t1.0-9/377931_490996110911615_1972897439_n.jpg?oh=897376560e6b70b6a22512fbdd6994e5&oe=5AAC03C7" }]
         }
         else if (input == "questions" || input == "question" || input == "Questions" || input == "Question") {
             return [{ "publisher": "I have a question", "title": "Cory Clapp", "recipe_id": "CoryClappQ", 

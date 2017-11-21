@@ -5,8 +5,8 @@ import {
     FlatList, TextInput, Keyboard, ActivityIndicator, AsyncStorage,
 } from 'react-native';
 import Swipeout from 'react-native-swipeout';
-import { List, ListItem} from 'react-native-elements';
-import { StackNavigator } from 'react-navigation';
+import { List, ListItem } from 'react-native-elements';
+import { StackNavigator, NavigationActions } from 'react-navigation';
 import { Constants, } from 'expo';
 import EasterEgg from './EasterEgg';
 
@@ -19,11 +19,11 @@ var endReached = false;
 
 export default class RecipesScreen extends React.Component {
 
-    static navigationOptions = ({ navigation, screenProps }) => ({
+    static navigationOptions = ({ navigation }) => ({
         title: 'Recipes',
         headerLeft: (
-            <View style={{ height: screenWidth * 0.10, width: screenWidth * 0.10, backgroundColor: '#99ccff', justifyContent: 'center', alignItems: 'center',}}>
-                <TouchableOpacity onPress={() => navigation.navigate('Favorites')}>
+            <View style={{ height: screenWidth * 0.10, width: screenWidth * 0.10, backgroundColor: '#99ccff', justifyContent: 'center', alignItems: 'center', }}>
+                <TouchableOpacity onPress={() => navigation.state.params.redirectToPlanner ? navigation.navigate('Favorites', { redirectToPlanner: `${true}` }) : navigation.navigate('Favorites', { redirectToPlanner: "" })}>
                     <View>
                         <Image source={require('./Assets/favorite.png')} style={{height: screenWidth * 0.10, width: screenWidth * 0.10, backgroundColor: '#99ccff',}} />
                     </View>
@@ -32,6 +32,7 @@ export default class RecipesScreen extends React.Component {
         ),
         headerRight: <Text style={{ color: '#0000ff', fontSize: 10, }}>Powered By Food2Fork.com</Text>,
         headerStyle: { paddingTop: Constants.statusBarHeight, height: 60 + Constants.statusBarHeight, backgroundColor: '#99ccff' },
+        gesturesEnabled: false,
     });
 
     state = {
@@ -40,15 +41,12 @@ export default class RecipesScreen extends React.Component {
         loading: false,
     };
 
-    componentWillMount() {
-        if(this.props.navigation.state.params.input) {
-            this.setState({ text: this.props.navigation.state.params.input });
-        }
-    }
-
     componentDidMount() {
         this.prevInput = this.state.text;
         this.search();
+        if (this.props.navigation.state.params.input) {
+            this.setState({ text: this.props.navigation.state.params.input });
+        }
     }
 
     componentWillUpdate(prevProps, prevState) {
@@ -95,7 +93,6 @@ export default class RecipesScreen extends React.Component {
         else {
             easteregg = false; //end easter egg
             var myRequest = `http://food2fork.com/api/search?key=c6bd8277327971ad694a7aed81d28e18&q=${this.state.text}&page=${page}`;
-                console.log(`fetch ${myRequest}`)
             fetch(myRequest).then(results => results.json()).then(results => {
                 if(JSON.stringify(results.recipes) != '[]') {
                     this.setState({ data: this.state.data.concat(results.recipes) });
@@ -144,6 +141,21 @@ export default class RecipesScreen extends React.Component {
         })
     }
 
+    onItemPress = (navigate, item) => {
+        if (!this.props.navigation.state.params.redirectToPlanner) {
+            navigate('Get', { source_url: item.source_url })
+        }
+        else {
+                const resetAction = NavigationActions.reset({
+                    index: 0,
+                    actions: [
+                        NavigationActions.navigate({ routeName: 'Planner', params: {item: `${JSON.stringify(item)}`}, })
+                    ]
+                });
+                this.props.navigation.dispatch(resetAction);
+        }
+    }
+
     render() {
         const { navigate } = this.props.navigation;
         return (
@@ -175,7 +187,7 @@ export default class RecipesScreen extends React.Component {
                                     }];
                                     return (
                                         <Swipeout right={swipeoutBtns} autoClose={true} backgroundColor='transparent'>
-                                            <TouchableHighlight onPress={() => navigate('Get', { source_url: item.source_url })} underlayColor='#ffb366'>
+                                            <TouchableHighlight onPress={() => this.onItemPress(navigate, item)} underlayColor='#ffb366'>
                                                 <View>
                                                     <ListItem
                                                         roundAvatar
@@ -195,7 +207,16 @@ export default class RecipesScreen extends React.Component {
                 </View>
                 <View style={{ width: screenWidth, height: screenHeight * 0.10, flexDirection: 'row', backgroundColor: '#F5FCFF', justifyContent: 'flex-end', alignItems: 'flex-end', }}>
                     <View style={styles.bMenu}>
-                        <TouchableOpacity onPress={() => navigate('Inventory')} >
+                        <TouchableOpacity onPress={() => {
+                            const resetAction = NavigationActions.reset({
+                                index: 0,
+                                actions: [
+                                    NavigationActions.navigate({ routeName: 'Inventory', params: {}, })
+                                ]
+                            });
+
+                            this.props.navigation.dispatch(resetAction);
+                        }}>
                                 <Image source={require('./Assets/clipboard.png')} style={styles.mButtons} />
                         </TouchableOpacity>
                     </View>
@@ -205,12 +226,30 @@ export default class RecipesScreen extends React.Component {
                         </TouchableOpacity>
                     </View>
                     <View style={styles.bMenu}>
-                        <TouchableOpacity onPress={() => navigate('Planner')}>
+                        <TouchableOpacity onPress={() => {
+                            const resetAction = NavigationActions.reset({
+                                index: 0,
+                                actions: [
+                                    NavigationActions.navigate({ routeName: 'Planner', params: { item: "" } })
+                                ]
+                            });
+
+                            this.props.navigation.dispatch(resetAction);
+                        }}>
                                 <Image source={require('./Assets/calendar.png')} style={styles.mButtons} />
                         </TouchableOpacity>
                     </View>
                     <View style={styles.bMenu}>
-                        <TouchableOpacity onPress={() => navigate('Settings')}>
+                        <TouchableOpacity onPress={() => {
+                            const resetAction = NavigationActions.reset({
+                                index: 0,
+                                actions: [
+                                    NavigationActions.navigate({ routeName: 'Settings', params: {}, })
+                                ]
+                            });
+
+                            this.props.navigation.dispatch(resetAction);
+                        }}>
                                 <Image source={require('./Assets/settings.png')} style={styles.mButtons} />
                         </TouchableOpacity>
                     </View>

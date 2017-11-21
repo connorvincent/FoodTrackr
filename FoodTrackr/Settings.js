@@ -4,7 +4,7 @@ import {
     TouchableOpacity, AppRegistry, Alert,
     List, FlatList, ListItem, SearchBar, Button, Switch
 } from 'react-native';
-import { StackNavigator } from 'react-navigation';
+import { StackNavigator, NavigationActions } from 'react-navigation';
 import { Constants, } from 'expo';
 
 var screenWidth = Dimensions.get('window').width;
@@ -40,6 +40,7 @@ export default class RecipesScreen extends React.Component {
             height: 60 + Constants.statusBarHeight,
             backgroundColor: '#99ccff'
         },
+        gesturesEnabled: false,
     };
 
 
@@ -84,17 +85,44 @@ export default class RecipesScreen extends React.Component {
 
             <View style={styles.aMenu}>
                 <View style={styles.bMenu}>
-                    <TouchableOpacity onPress={() => navigate('Inventory')}>
+                            <TouchableOpacity onPress={() => {
+                                const resetAction = NavigationActions.reset({
+                                    index: 0,
+                                    actions: [
+                                        NavigationActions.navigate({ routeName: 'Inventory', params: {}, })
+                                    ]
+                                });
+
+                                this.props.navigation.dispatch(resetAction);
+                            }}>
                         <Image source={require('./Assets/clipboard.png')} style={styles.mButtons} />
                     </TouchableOpacity>
                 </View>
                 <View style={styles.bMenu}>
-                    <TouchableOpacity onPress={() => navigate('Recipes', { input: "" })}>
+                            <TouchableOpacity onPress={() => {
+                                const resetAction = NavigationActions.reset({
+                                    index: 0,
+                                    actions: [
+                                        NavigationActions.navigate({ routeName: 'Recipes', params: { input: "", redirectToPlanner: "" } })
+                                    ]
+                                });
+
+                                this.props.navigation.dispatch(resetAction);
+                            }}>
                         <Image source={require('./Assets/book.png')} style={styles.mButtons} />
                     </TouchableOpacity>
                 </View>
                 <View style={styles.bMenu}>
-                    <TouchableOpacity onPress={() => navigate('Planner')}>
+                            <TouchableOpacity onPress={() => {
+                                const resetAction = NavigationActions.reset({
+                                    index: 0,
+                                    actions: [
+                                        NavigationActions.navigate({ routeName: 'Planner', params: { item: "" } })
+                                    ]
+                                });
+
+                                this.props.navigation.dispatch(resetAction);
+                            }}>
                         <Image source={require('./Assets/calendar.png')} style={styles.mButtons} />
                     </TouchableOpacity>
                 </View>

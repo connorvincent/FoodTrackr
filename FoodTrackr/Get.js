@@ -23,6 +23,7 @@ export default class GetScreen extends React.Component {
             height: 60 + Constants.statusBarHeight,
             backgroundColor: '#99ccff'
         },
+        gesturesEnabled: false,
     };
 
     state = {
