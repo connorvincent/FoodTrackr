@@ -10,6 +10,7 @@ import Swipeout from 'react-native-swipeout';
 
 var screenWidth = Dimensions.get('window').width;
 var screenHeight = Dimensions.get('window').height;
+var daySelected = '';
 
 export default class PlannerScreen extends Component {
     constructor(props) {
@@ -17,7 +18,7 @@ export default class PlannerScreen extends Component {
         this.state = {
 			data: []
 		};
-		this.onDayPress.bind(this);
+		this.onDayPress = this.onDayPress.bind(this);
     }
 
 
@@ -60,7 +61,7 @@ export default class PlannerScreen extends Component {
 					</List>
 				</View>
 				<View style={{ flex: 0.05, }}>
-					<TouchableOpacity style={{ backgroundColor: '#99ccff', flex: 1, alignItems: 'center', justifyContent: 'center', }} onPress={() => {} }>
+					<TouchableOpacity style={{ backgroundColor: '#99ccff', flex: 1, alignItems: 'center', justifyContent: 'center', }} onPress={() => this._onPress(navigate) }>
 						<Text style={{ color: 'black', fontSize: 15, textAlign: 'center' }} >
 							Add Recipe
 						</Text>
@@ -121,18 +122,23 @@ export default class PlannerScreen extends Component {
         );
     }
 	onDayPress = (day) => {
-		AsyncStorage.getItem(`${day}`, (err, result) => {
-            if(result) {
-                this.setState({ data: JSON.parse(result) })
-            }
-            else 
-            {
-                this.setState({ data: [{"publisher": "No recipes on this day", "title": "Empty Date", "source_url": "https://maxcdn.icons8.com/Share/icon/win10/Science//empty_set1600.png", "image_url": "https://maxcdn.icons8.com/Share/icon/win10/Science//empty_set1600.png"}] })
-            }
-        })
+		this.setState({ selected: day.dateString })
+		setTimeout(() => {
+			AsyncStorage.getItem(`${day.dateString}`, (err, result) => {
+				if(result) {
+					this.setState({ data: JSON.parse(result) })
+				}
+				else 
+				{
+					this.setState({ data: [{"publisher": "No recipes on this day", "title": "Empty Date", "source_url": "https://maxcdn.icons8.com/Share/icon/win10/Science//empty_set1600.png", "image_url": "https://maxcdn.icons8.com/Share/icon/win10/Science//empty_set1600.png"}] })
+				}
+			})
+		}, 1000);
+		this.daySelected = day.dateString;
+		console.log(day.dateString);
 	}
 	_onPress(navigate) {
-		navigate('Recipes', { redirectToPlanner: `${true}` });
+		navigate('Recipes', { redirectToPlanner: `${daySelected}` });
 	}
 	onItemPress = (navigate, item) => {
 		navigate('Get', { source_url: item.source_url })
