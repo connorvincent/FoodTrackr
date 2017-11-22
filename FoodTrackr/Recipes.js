@@ -134,7 +134,7 @@ export default class RecipesScreen extends React.Component {
             if(result.startsWith('[{')) {
                 AsyncStorage.setItem('favorites', JSON.stringify(JSON.parse(result).concat(item)));
             }
-            else
+            else 
             {
                 AsyncStorage.setItem('favorites', JSON.stringify([].concat(item)));
             }

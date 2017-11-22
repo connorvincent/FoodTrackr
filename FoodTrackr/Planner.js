@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import {
-  Text, View, StyleSheet, Button, Dimensions, TouchableOpacity, Image, AsyncStorage,
+  Text, View, StyleSheet, Button, Dimensions, TouchableOpacity, Image, FlatList, TouchableHighlight, AsyncStorage
 } from 'react-native';
-import {Agenda} from 'react-native-calendars';
+import {Agenda, Calendar} from 'react-native-calendars';
 import { Constants, } from 'expo';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import { List, ListItem } from 'react-native-elements';
@@ -15,33 +15,57 @@ export default class PlannerScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-        items: {}, data: []
-        };
+			data: []
+		};
+		this.onDayPress.bind(this);
     }
 
+
+	componentDidMount() {
+	}
+
+	
+
     render() {
+		const { navigate } = this.props.navigation;
         return (
             <View style={{ flex: 1, }}>
-                <Agenda
-                    items={this.state.items}
-                    loadItemsForMonth={this.loadItems.bind(this)}
-                    renderItem={this.renderItem.bind(this)}
-                    renderEmptyDate={this.renderEmptyDate.bind(this)}
-                    rowHasChanged={this.rowHasChanged.bind(this)}
-                    //markingType={'interactive'}
-                    //markedDates={{
-                    //  '2017-05-08': [{textColor: '#666'}],
-                    //  '2017-05-09': [{textColor: '#666'}],
-                    //  '2017-05-14': [{startingDay: true, color: 'blue'}, {endingDay: true, color: 'blue'}],
-                    //  '2017-05-21': [{startingDay: true, color: 'blue'}],
-                    //  '2017-05-22': [{endingDay: true, color: 'gray'}],
-                    //  '2017-05-24': [{startingDay: true, color: 'gray'}],
-                    //  '2017-05-25': [{color: 'gray'}],
-                    //  '2017-05-26': [{endingDay: true, color: 'gray'}]}}
-                    // monthFormat={'yyyy'}
-                    // theme={{calendarBackground: 'red', agendaKnobColor: 'green'}}
-                    //renderDay={(day, item) => (<Text>{day ? day.day: 'item'}</Text>)}
-                />
+				<View style={{ flex: 0.6, }}>
+					<Calendar
+						onDayPress={this.onDayPress}
+						style={styles.calendar}
+						hideExtraDays
+						markedDates={{[this.state.selected]: {selected: true}}}
+					/>
+				</View>
+				<View style={{ flex: 0.35, }}>
+					  <List containerStyle={{ marginTop: 0 }}>
+						<FlatList
+							data={this.state.data}
+							extraData={this.state}
+							keyExtractor={(x, i) => i}
+							renderItem={({ item, index }) => (
+								<TouchableHighlight onPress={() => this.onItemPress(navigate, item)} underlayColor='#ffb366'>
+											 <View>
+												 <ListItem
+													roundAvatar
+													avatar={{ uri: item.image_url }}
+													title={item.title}
+													subtitle={item.publisher}
+												 />
+											 </View>
+									</TouchableHighlight>
+							)}     
+						/>
+					</List>
+				</View>
+				<View style={{ flex: 0.05, }}>
+					<TouchableOpacity style={{ backgroundColor: '#99ccff', flex: 1, alignItems: 'center', justifyContent: 'center', }} onPress={() => {} }>
+						<Text style={{ color: 'black', fontSize: 15, textAlign: 'center' }} >
+							Add Recipe
+						</Text>
+                    </TouchableOpacity>
+				</View>
                 <View style={{ backgroundColor: '#e6eeff', alignItems: 'flex-start', }}>
                     <View style={{ width: screenWidth, height: screenHeight * 0.10, flexDirection: 'row', backgroundColor: '#F5FCFF', justifyContent: 'flex-end', alignItems: 'flex-end', }}>
                         <View style={styles.bMenu}>
@@ -96,69 +120,26 @@ export default class PlannerScreen extends Component {
             </View>
         );
     }
-
-    _onPress(navigate) {
-        navigate('Recipes', { redirectToPlanner: `${true}` });
-    }
-
-    loadItems(day) {
-        const { navigate } = this.props.navigation;
-        setTimeout(() => {
-            for (let i = -15; i < 85; i++) {
-                const time = day.timestamp + i * 24 * 60 * 60 * 1000;
-                const strTime = this.timeToString(time);
-                if (!this.state.items[strTime]) {
-                    this.state.items[strTime] = [];
-                const numItems = Math.floor(Math.random() * 5);
-                for (let j = 0; j < numItems; j++) {
-                    this.state.items[strTime].push({
-                    name: 'Item for ' + strTime,
-                    height: Math.max(50, 50),
-                    });
-                }
+	onDayPress = (day) => {
+		AsyncStorage.getItem(`${day}`, (err, result) => {
+            if(result) {
+                this.setState({ data: JSON.parse(result) })
             }
-        }
-        //console.log(this.state.items);
-        const newItems = {};
-        Object.keys(this.state.items).forEach(key => {newItems[key] = this.state.items[key];});
-        this.setState({
-            items: newItems
-        });
-        }, 1000);
-        //console.log(`Load Items for ${day.year}-${day.month}`);
-    }
-
-    renderItem(item, day) {
-        const { navigate } = this.props.navigation;
-        return (
-            <View>
-                <View style={[styles.item, {height: item.height}]}><Text>{item.name}</Text></View>
-                <View style={styles.buttonContainer}>
-                    <Button onPress={() => this._onPress(navigate)} title="Add Recipe" color="#000000" accessibilityLabel="Tap on Me"/>
-                </View>
-            </View>
-        );
-    }
-
-    renderEmptyDate() {
-        const { navigate } = this.props.navigation;
-        return (
-            <View style={{ flex: 1 }}>
-                <View style={styles.emptyDate}><Text>This is empty date!</Text></View>
-                    <Button onPress={() => this._onPress(navigate)} title="Add Recipe" color="#000000" accessibilityLabel="Tap on Me"/>
-            </View>
-        );
-    }
-
-    rowHasChanged(r1, r2) {
-        return r1.name !== r2.name;
-    }
-
-    timeToString(time) {
-        const date = new Date(time);
-        return date.toISOString().split('T')[0];
+            else 
+            {
+                this.setState({ data: [{"publisher": "No recipes on this day", "title": "Empty Date", "source_url": "https://maxcdn.icons8.com/Share/icon/win10/Science//empty_set1600.png", "image_url": "https://maxcdn.icons8.com/Share/icon/win10/Science//empty_set1600.png"}] })
+            }
+        })
+	}
+	_onPress(navigate) {
+		navigate('Recipes', { redirectToPlanner: `${true}` });
+	}
+	onItemPress = (navigate, item) => {
+		navigate('Get', { source_url: item.source_url })
     }
 }
+
+   
 
 const styles = StyleSheet.create({
     item: {
