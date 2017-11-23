@@ -16,6 +16,7 @@ var page = 1;
 var easteregg = false;
 var prevInput;
 var endReached = false;
+var darkMode;
 
 export default class RecipesScreen extends React.Component {
 
@@ -38,6 +39,18 @@ export default class RecipesScreen extends React.Component {
         }
     };
 
+    componentWillMount() {
+        AsyncStorage.getItem('darkMode', (err, result) => {
+            if(result == 'true') {
+                darkMode = true;
+            }
+            else {
+                darkMode = false;
+            }
+        })
+    }
+
+
     state = {
             text: '',
             data: [],
@@ -45,11 +58,16 @@ export default class RecipesScreen extends React.Component {
     }
 
     componentDidMount() {
+        this._isMounted = true;
         if (this.props.navigation.state.params.input) {
-            this.setState({ text: this.props.navigation.state.params.input });
+            if(this._isMounted) {
+                this.setState({ text: this.props.navigation.state.params.input });
+            }
         }
         else {
-            this.setState({ text: '' });
+            if(this._isMounted) {
+                this.setState({ text: '' });
+            }
         }
         setTimeout(() => {
             this.preSearch();
@@ -58,13 +76,17 @@ export default class RecipesScreen extends React.Component {
 
     componentWillUpdate(prevProps, prevState) {
         if (!this.state.loading) {
-            this.setState({ loading: true });
+            if(this._isMounted) {
+                this.setState({ loading: true });
+            }
         }
     }
 
     componentDidUpdate(prevProps, prevState) {
         if (this.state.loading) {
-            this.setState({ loading: false });
+            if(this._isMounted) {
+                this.setState({ loading: false });
+            }
         }
     }
 
@@ -87,7 +109,9 @@ export default class RecipesScreen extends React.Component {
     search = () => {
         this.endReached= false;
         page = 1;
-        this.setState({ data: [], });
+        if(this._isMounted) {
+            this.setState({ data: [], });
+        }
         this.fetchData();
     };
 
@@ -96,14 +120,18 @@ export default class RecipesScreen extends React.Component {
         //easter egg
         if(EasterEgg.isEggs(this.state.text)) {
             easteregg = true;
-            this.setState({ data: EasterEgg.getEggs(this.state.text) });
+            if(this._isMounted) {
+                this.setState({ data: EasterEgg.getEggs(this.state.text) });
+            }
         }
         else {
             easteregg = false; //end easter egg
             var myRequest = `http://food2fork.com/api/search?key=c6bd8277327971ad694a7aed81d28e18&q=${this.state.text}&page=${page}`;
             fetch(myRequest).then(results => results.json()).then(results => {
                 if(JSON.stringify(results.recipes) != '[]') {
-                    this.setState({ data: this.state.data.concat(results.recipes) });
+                    if(this._isMounted) {
+                        this.setState({ data: this.state.data.concat(results.recipes) });
+                    }
                     this.endReached = false;
                     if(results.recipes.length%30 != 0)
                         this.fetchEnd();
@@ -119,7 +147,9 @@ export default class RecipesScreen extends React.Component {
         if(!this.state.loading && !this.endReached) {
             if(this.waited) {
                 page = page + 1;
-                this.setState(state => ({ loading: true }), () => this.fetchData());
+                if(this._isMounted) {
+                    this.setState(state => ({ loading: true }), () => this.fetchData());
+                }
                 this.waited=false;
                 setTimeout( () => {this.waited = true}, 3000)
             }
@@ -134,7 +164,9 @@ export default class RecipesScreen extends React.Component {
         var endData = {"title": "No more data", "publisher": "End of page reached", 
         "source_url": "http://food2fork.com/about/api", "recipe_id": "end", 
         "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Australian_road_sign_-_dead_end.svg/2000px-Australian_road_sign_-_dead_end.svg.png"};
-        this.setState({ loading: false, data: this.state.data.concat(endData) });
+        if(this._isMounted) {
+            this.setState({ loading: false, data: this.state.data.concat(endData) });
+        }
     }
 
     favorite = (item, index) => {
@@ -172,6 +204,10 @@ export default class RecipesScreen extends React.Component {
             console.log(`send to Planner: ${this.props.navigation.state.params.redirectToPlanner}`);
             this.props.navigation.dispatch(resetAction);
         }
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     render() {

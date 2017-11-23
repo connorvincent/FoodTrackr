@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Text, View, StyleSheet, Button, Dimensions, TouchableOpacity, Image, FlatList, TouchableHighlight, AsyncStorage, ScrollView
+  Text, View, StyleSheet, Dimensions, TouchableOpacity, Image, FlatList, TouchableHighlight, AsyncStorage, ScrollView
 } from 'react-native';
 import {Agenda, Calendar} from 'react-native-calendars';
 import { Constants, } from 'expo';
@@ -23,6 +23,7 @@ export default class PlannerScreen extends Component {
 
 
 	componentDidMount() {
+        this._isMounted = true;
         var date = '';
         if (!this.props.navigation.state.params.item) {
             var today = new Date();
@@ -33,11 +34,17 @@ export default class PlannerScreen extends Component {
             date = this.props.navigation.state.params.item;
         }
         daySelected = date;
-        this.setState({ selected: date });
+        if(this._isMounted) {
+            this.setState({ selected: date });
+        }
         setTimeout(() => {
             this.fetchData(date);
         }, 1000);
     }
+    
+    componentWillUnmount() {
+        this._isMounted = false;
+   }
 
     render() {
 		const { navigate } = this.props.navigation;
@@ -145,7 +152,9 @@ export default class PlannerScreen extends Component {
         );
     }
 	onDayPress = (day) => {
-		this.setState({ selected: day.dateString })
+        if(this._isMounted) {
+            this.setState({ selected: day.dateString })
+        }
 		this.fetchData(day.dateString);
         daySelected = day.dateString;
     }
@@ -165,18 +174,24 @@ export default class PlannerScreen extends Component {
     delete = (item, index) => {
         var copy = this.state.data;
         copy.splice(index, 1);
-        this.setState({ data: copy })
+        if(this._isMounted) {
+            this.setState({ data: copy })
+        }
         AsyncStorage.setItem(`${daySelected}`, JSON.stringify(copy));
         this.fetchData(daySelected);
     }
     fetchData(day) {
         AsyncStorage.getItem(`${day}`, (err, result) => {
             if(result && result != '[]') {
-                this.setState({ data: JSON.parse(result) })
+                if(this._isMounted) {
+                    this.setState({ data: JSON.parse(result) })
+                }
             }
             else 
             {
-                this.setState({ data: [{"publisher": "No recipes on this day", "title": "Empty Date", "source_url": "https://maxcdn.icons8.com/Share/icon/win10/Science//empty_set1600.png", "image_url": "https://maxcdn.icons8.com/Share/icon/win10/Science//empty_set1600.png"}] })
+                if(this._isMounted) {
+                    this.setState({ data: [{"publisher": "No recipes on this day", "title": "Empty Date", "source_url": "https://maxcdn.icons8.com/Share/icon/win10/Science//empty_set1600.png", "image_url": "https://maxcdn.icons8.com/Share/icon/win10/Science//empty_set1600.png"}] })
+                }
             }
         })
     }

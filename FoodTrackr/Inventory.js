@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {
     StyleSheet, Text, View, Image, Dimensions,
     TouchableOpacity, AppRegistry, StatusBar,
-    FlatList, Alert, Button
+    FlatList, Alert, AsyncStorage
 } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import { Constants } from 'expo';
@@ -11,6 +11,7 @@ import { List, ListItem } from 'react-native-elements';
 var screenWidth = Dimensions.get('window').width;
 var screenHeight = Dimensions.get('window').height;
 var Items = require('./Assets/ExampleInventory.json');
+var darkMode;
 
 export default class InventoryScreen extends React.Component {
 
@@ -29,7 +30,7 @@ export default class InventoryScreen extends React.Component {
             ),
             headerRight: (
                 <View style={{ height: screenWidth * 0.10, width: screenWidth * 0.10, backgroundColor: '#99ccff', justifyContent: 'center', alignItems: 'center', }}>
-                    <TouchableOpacity onPress={() => params.handleThis(navigation.navigate) }>
+                    <TouchableOpacity onPress={() => params.handleThis() }>
                         <View>
                             <Image source={require('./Assets/magnifier.png')} style={{ height: screenWidth * 0.10, width: screenWidth * 0.10, backgroundColor: '#99ccff', }} />
                         </View>
@@ -45,6 +46,18 @@ export default class InventoryScreen extends React.Component {
         }
     };
 
+    componentWillMount() {
+        AsyncStorage.getItem('darkMode', (err, result) => {
+            if(result == 'true') {
+                darkMode = true;
+            }
+            else {
+                darkMode = false;
+            }
+        })
+    }
+
+
     constructor(props) {
         super(props);
         this.state = {
@@ -53,6 +66,7 @@ export default class InventoryScreen extends React.Component {
     }
 
     componentDidMount() {
+        this._isMounted = true;
         this.props.navigation.setParams({
             handleThis: this.search
         });
@@ -60,10 +74,12 @@ export default class InventoryScreen extends React.Component {
         for (i = 0; i < Items.inventoryItems.length; i++) {
             checkedItems = checkedItems.concat([null]);
         }
-        this.setState({ checkedItems: checkedItems,})
+        if(this._isMounted) {
+            this.setState({ checkedItems: checkedItems,})
+        }
     }
 
-    search = (navigate) => {
+    search = () => {
         var request = '';
         for (i = 0; i < Items.inventoryItems.length; i++) {
             if(this.state.checkedItems[i] != null) {
@@ -71,14 +87,27 @@ export default class InventoryScreen extends React.Component {
             }
         }
         request = request.slice(0, -2); //remove last 2 characters
-        navigate('Recipes', { input: `${request}` });
+        const resetAction = NavigationActions.reset({
+            index: 0,
+            actions: [
+                NavigationActions.navigate({ routeName: 'Recipes', params: { input: `${request}`, redirectToPlanner: "" } })
+            ]
+        });
+
+        this.props.navigation.dispatch(resetAction);
     }
 
     check = (item, index) => {
         var checked = this.state.checkedItems[index] != null;
         var newCheckedItems = this.state.checkedItems;
         !checked ? newCheckedItems.splice(index, 1, item.itemName) : newCheckedItems.splice(index, 1, null)
-        this.setState({ checkedItems: newCheckedItems})
+        if(this._isMounted) {
+            this.setState({ checkedItems: newCheckedItems})
+        }
+    }
+
+    componentWillUnmount() {
+         this._isMounted = false;
     }
 
     render() {

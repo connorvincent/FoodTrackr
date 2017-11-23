@@ -1,35 +1,93 @@
 import React, { Component } from 'react';
 import {
     StyleSheet, Text, View, Image, Dimensions,
-    TouchableOpacity, AppRegistry, Alert,
-    List, FlatList, ListItem, SearchBar, Button, Switch
+    TouchableOpacity, AppRegistry, Alert, AsyncStorage,
+    List, FlatList, ListItem, SearchBar, Switch
 } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import { Constants, } from 'expo';
 
 var screenWidth = Dimensions.get('window').width;
 var screenHeight = Dimensions.get('window').height;
+var darkMode;
 
-export default class RecipesScreen extends React.Component {
+export default class SettingsScreen extends React.Component {
+
+    /*
+    if(!val) {
+        this.setState({ color: '#99ccff', color1: '#e6eeff', color2: '#F5FCFF', color3: '#FF9E24'})
+    }
+    else {
+        this.setState({ color: '#004d99', color1: '#002880', color2: '#002880', color3: '#99ccff'})
+    }
+    */
+
+    componentWillMount() {
+        AsyncStorage.getItem('darkMode', (err, result) => {
+            if(result == 'true') {
+                darkMode = true;
+            }
+            else {
+                darkMode = false;
+            }
+        })
+    }
 
     state = {
-        switchValue: false
+        switchValue: false,
+        switchValue2: true,
+        color: darkMode ? '#808080' : '#99ccff',
+        color1: darkMode ? '#0077b3': '#e6eeff' ,
+        color2: darkMode ? '#0077b3' : '#F5FCFF',
+        color3: darkMode ? '#808080' : '#FF9E24',
     };
-    state = {
-        switchValue2: true
-    };
+
+    componentDidMount() {
+        this._isMounted = true;
+        AsyncStorage.getItem('darkMode', (err, result) => {
+            if(this._isMounted) {
+                this.setState({ switchValue: (result == 'true') });
+            }
+            if((this.state.color == '#004d99' && result == 'false') || (this.state.color == '#99ccff' && result == 'true'))
+                if(this._isMounted)
+                    this.reset()
+         })
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
+   }
 
     //Switch Handlers
-    _handleToggleSwitch = () => this.setState(state => ({
-        switchValue: !state.switchValue
-    }));
-    _handleToggleSwitch2 = () => this.setState(state => ({
-        switchValue2: !state.switchValue2
-    }));
+    _handleToggleSwitch = () => {
+        var val = !this.state.switchValue;
+        AsyncStorage.setItem('darkMode', `${val}`);
+        if(this._isMounted) {
+            this.setState({ switchValue: val })
+            this.reset();
+        }
+    }
+
+    _handleToggleSwitch2 = () => {
+        if(this._isMounted) {
+            this.setState({ switchValue2: !this.state.switchValue2 });
+        }
+    }
 
     // About button handler
     _onPress() {
         Alert.alert('About Team B.A.C.K screen appears here');
+    }
+
+    reset() {
+        const resetAction = NavigationActions.reset({
+            index: 0,
+            actions: [
+                NavigationActions.navigate({ routeName: 'Settings', params: {}, })
+            ]
+        });
+
+        this.props.navigation.dispatch(resetAction);
     }
 
     static navigationOptions = {
@@ -50,7 +108,7 @@ export default class RecipesScreen extends React.Component {
 
             <View style={{
                 flex: 1,
-                backgroundColor: '#e6eeff',
+                backgroundColor: this.state.color1,
             }}>
 
                 {/* Toggle Dark Theme */}
@@ -76,15 +134,19 @@ export default class RecipesScreen extends React.Component {
                     />
                 </View>
 
-                <View style={styles.buttonContainer}>
-                    <Button onPress={this._onPress} title="About Team B.A.C.K" color="#99ccff" accessibilityLabel="Tap on Me"/>
+                <View style={this.styles.buttonContainer}>
+                    <TouchableOpacity style={{ backgroundColor: this.state.color, flex: 1, alignItems: 'center', justifyContent: 'center', }} onPress={() => this._onPress() }>
+                        <Text style={{ fontWeight: 'bold', color: 'black', fontSize: screenHeight*0.035, textAlign: 'center' }} >
+                            About Team B.A.C.K
+                        </Text>
+                    </TouchableOpacity>
                 </View>
 
                {/* Nav bar */}
-                <View style={styles.buttonLayout}>
+                <View style={this.styles.buttonLayout}>
 
-            <View style={styles.aMenu}>
-                <View style={styles.bMenu}>
+            <View style={this.styles.aMenu}>
+                <View style={this.styles.bMenu}>
                             <TouchableOpacity onPress={() => {
                                 const resetAction = NavigationActions.reset({
                                     index: 0,
@@ -95,10 +157,10 @@ export default class RecipesScreen extends React.Component {
 
                                 this.props.navigation.dispatch(resetAction);
                             }}>
-                        <Image source={require('./Assets/clipboard.png')} style={styles.mButtons} />
+                        <Image source={require('./Assets/clipboard.png')} style={this.styles.mButtons} />
                     </TouchableOpacity>
                 </View>
-                <View style={styles.bMenu}>
+                <View style={this.styles.bMenu}>
                             <TouchableOpacity onPress={() => {
                                 const resetAction = NavigationActions.reset({
                                     index: 0,
@@ -109,10 +171,10 @@ export default class RecipesScreen extends React.Component {
 
                                 this.props.navigation.dispatch(resetAction);
                             }}>
-                        <Image source={require('./Assets/book.png')} style={styles.mButtons} />
+                        <Image source={require('./Assets/book.png')} style={this.styles.mButtons} />
                     </TouchableOpacity>
                 </View>
-                <View style={styles.bMenu}>
+                <View style={this.styles.bMenu}>
                             <TouchableOpacity onPress={() => {
                                 const resetAction = NavigationActions.reset({
                                     index: 0,
@@ -123,12 +185,12 @@ export default class RecipesScreen extends React.Component {
 
                                 this.props.navigation.dispatch(resetAction);
                             }}>
-                        <Image source={require('./Assets/calendar.png')} style={styles.mButtons} />
+                        <Image source={require('./Assets/calendar.png')} style={this.styles.mButtons} />
                     </TouchableOpacity>
                 </View>
-                <View style={styles.bMenu}>
+                <View style={this.styles.bMenu}>
                     <TouchableOpacity>
-                        <Image source={require('./Assets/aSettings.png')} style={styles.mButtons} />
+                        <Image source={require('./Assets/aSettings.png')} style={this.styles.mButtons} />
                     </TouchableOpacity>
                 </View>
             </View>
@@ -136,68 +198,67 @@ export default class RecipesScreen extends React.Component {
                 </View>
         );
     }
-}
+    styles = StyleSheet.create({
 
-const styles = StyleSheet.create({
-
-    containerSwitch: {
-        flex: 1,
-        alignItems: 'center',
-        marginTop: 100
-    },
-
-    aMenu: {
-        height: screenHeight * 0.10,
+        containerSwitch: {
+            flex: 1,
+            alignItems: 'center',
+            marginTop: 100
+        },
+    
+        aMenu: {
+            height: screenHeight * 0.10,
+            width: screenWidth,
+            flexDirection: 'row',
+            backgroundColor: this.state.color2,
+            justifyContent: 'flex-end',
+            alignItems: 'flex-end',
+        },
+    
+        bMenu: {
+            flex: 1,
+            flexDirection: 'row',
+            backgroundColor: this.state.color2,
+            justifyContent: 'flex-end',
+            alignItems: 'flex-end',
+        },
+    
+        mButtons: {
+            width: screenWidth * 0.25,
+            height: screenHeight * 0.10,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: this.state.color3,
+        },
+    
+        container: {
+            flex: 1,
+            backgroundColor: this.state.color2,
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+    
+        buttonLayout: {
+            flex: 1,
+            flexDirection: 'column',
+            backgroundColor: this.state.color2,
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+        },
+    
+        buttonContainer: {
+        height: screenHeight*0.10,
         width: screenWidth,
-        flexDirection: 'row',
-        backgroundColor: '#F5FCFF',
-        justifyContent: 'flex-end',
-        alignItems: 'flex-end',
-    },
-
-    bMenu: {
-        flex: 1,
-        flexDirection: 'row',
-        backgroundColor: '#F5FCFF',
-        justifyContent: 'flex-end',
-        alignItems: 'flex-end',
-    },
-
-    mButtons: {
-        width: screenWidth * 0.25,
-        height: screenHeight * 0.10,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#FF9E24',
-    },
-
-    container: {
-        flex: 1,
-        backgroundColor: '#F5FCFF',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-
-    buttonLayout: {
-        flex: 1,
-        flexDirection: 'column',
-        backgroundColor: '#F5FCFF',
-        alignItems: 'center',
-        justifyContent: 'flex-end',
-    },
-
-    buttonContainer: {
-    backgroundColor: '#000000',
-    borderRadius: 4,
-    padding: 1,
-    shadowColor: '#FF9E24',
-    shadowOffset: {
-      width: 0,
-      height: 1
-    },
-    shadowRadius: 10,
-    shadowOpacity: 0.25
-  }
-
-
-});
+        borderRadius: 4,
+        padding: 1,
+        marginTop: 25,
+        shadowColor: this.state.color3,
+        shadowOffset: {
+            width: 0,
+            height: 1
+        },
+        shadowRadius: 10,
+        shadowOpacity: 0.25
+        }
+    });
+}

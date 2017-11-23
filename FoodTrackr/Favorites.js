@@ -10,12 +10,24 @@ import { Constants, } from 'expo';
 
 var screenWidth = Dimensions.get('window').width;
 var screenHeight = Dimensions.get('window').height;
+var darkMode;
 export default class FavoritesScreen extends React.Component {
 
     static navigationOptions = {
         title: 'Favorites',
         headerStyle: { paddingTop: Constants.statusBarHeight, height: 60 + Constants.statusBarHeight, backgroundColor: '#99ccff' },
     };
+
+    componentWillMount() {
+        AsyncStorage.getItem('darkMode', (err, result) => {
+            if(result == 'true') {
+                darkMode = true;
+            }
+            else {
+                darkMode = false;
+            }
+        })
+    }
 
     state = {
         data: [],
