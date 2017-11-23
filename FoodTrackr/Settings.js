@@ -13,15 +13,6 @@ var darkMode;
 
 export default class SettingsScreen extends React.Component {
 
-    /*
-    if(!val) {
-        this.setState({ color: '#99ccff', color1: '#e6eeff', color2: '#F5FCFF', color3: '#FF9E24'})
-    }
-    else {
-        this.setState({ color: '#004d99', color1: '#002880', color2: '#002880', color3: '#99ccff'})
-    }
-    */
-
     componentWillMount() {
         AsyncStorage.getItem('darkMode', (err, result) => {
             if(result == 'true') {
@@ -48,7 +39,7 @@ export default class SettingsScreen extends React.Component {
             if(this._isMounted) {
                 this.setState({ switchValue: (result == 'true') });
             }
-            if((this.state.color == '#004d99' && result == 'false') || (this.state.color == '#99ccff' && result == 'true'))
+            if((this.state.color == '#808080' && result == 'false') || (this.state.color == '#99ccff' && result == 'true'))
                 if(this._isMounted)
                     this.reset()
          })
