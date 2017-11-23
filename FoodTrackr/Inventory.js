@@ -40,9 +40,6 @@ export default class InventoryScreen extends React.Component {
     componentDidMount() {
         this._isMounted = true;
         AsyncStorage.getItem('darkMode', (err, result) => {
-            if(this._isMounted) {
-                this.setState({ switchValue: (result == 'true') });
-            }
             if((this.state.color1 == '#808080' && result == 'false') || (this.state.color1 == '#e6eeff' && result == 'true'))
                 if(this._isMounted)
                     this.reset()

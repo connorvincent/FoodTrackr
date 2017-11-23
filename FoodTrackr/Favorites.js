@@ -37,9 +37,6 @@ export default class FavoritesScreen extends React.Component {
     componentDidMount() {
         this._isMounted = true;
         AsyncStorage.getItem('darkMode', (err, result) => {
-            if(this._isMounted) {
-                this.setState({ switchValue: (result == 'true') });
-            }
             if((this.state.color1 == '#808080' && result == 'false') || (this.state.color1 == '#e6eeff' && result == 'true'))
                 if(this._isMounted)
                     this.reset(this.props.navigation.state.params.input)
@@ -76,7 +73,8 @@ export default class FavoritesScreen extends React.Component {
     delete = (item, index) => {
         var copy = this.state.data;
         copy.splice(index, 1);
-        this.setState({ data: copy })
+        if(this._isMounted)
+            this.setState({ data: copy })
         AsyncStorage.setItem('favorites', JSON.stringify(copy));
     }
     
