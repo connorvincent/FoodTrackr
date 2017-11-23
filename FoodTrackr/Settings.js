@@ -27,10 +27,11 @@ export default class SettingsScreen extends React.Component {
     state = {
         switchValue: false,
         switchValue2: true,
-        color: darkMode ? '#808080' : '#99ccff',
-        color1: darkMode ? '#0077b3': '#e6eeff' ,
-        color2: darkMode ? '#0077b3' : '#F5FCFF',
-        color3: darkMode ? '#808080' : '#FF9E24',
+        color: darkMode ? '#99ccff' : '#99ccff',
+        color1: darkMode ? '#808080': '#e6eeff' ,
+        color2: darkMode ? '#808080' : '#F5FCFF',
+        color3: darkMode ? '#f4a460' : '#FF9E24',
+        color4: darkMode ? '#00ffff' : '#333333',
     };
 
     componentDidMount() {
@@ -39,7 +40,7 @@ export default class SettingsScreen extends React.Component {
             if(this._isMounted) {
                 this.setState({ switchValue: (result == 'true') });
             }
-            if((this.state.color == '#808080' && result == 'false') || (this.state.color == '#99ccff' && result == 'true'))
+            if((this.state.color1 == '#808080' && result == 'false') || (this.state.color1 == '#e6eeff' && result == 'true'))
                 if(this._isMounted)
                     this.reset()
          })
@@ -104,7 +105,7 @@ export default class SettingsScreen extends React.Component {
 
                 {/* Toggle Dark Theme */}
                 <View style={{ height: 50, flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <Text style={{ fontSize: 25 }}>
+                    <Text style={{ fontSize: 25, color: this.state.color4 }}>
                         Toggle Dark Theme
                     </Text>
                     <Switch
@@ -116,7 +117,7 @@ export default class SettingsScreen extends React.Component {
 
                 {/* Button for push notifications */}
                 <View style={{ height: 50, flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <Text style={{ fontSize: 25 }}>
+                    <Text style={{ fontSize: 25, color: this.state.color4 }}>
                         Receive Push Notifications
                 </Text>
                     <Switch
@@ -127,7 +128,7 @@ export default class SettingsScreen extends React.Component {
 
                 <View style={this.styles.buttonContainer}>
                     <TouchableOpacity style={{ backgroundColor: this.state.color, flex: 1, alignItems: 'center', justifyContent: 'center', }} onPress={() => this._onPress() }>
-                        <Text style={{ fontWeight: 'bold', color: 'black', fontSize: screenHeight*0.035, textAlign: 'center' }} >
+                        <Text style={{ fontWeight: 'bold', color: this.state.color2, fontSize: screenHeight*0.035, textAlign: 'center' }} >
                             About Team B.A.C.K
                         </Text>
                     </TouchableOpacity>

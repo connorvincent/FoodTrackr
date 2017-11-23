@@ -8,12 +8,71 @@ import { StackNavigator, NavigationActions } from 'react-navigation';
 import { Constants } from 'expo';
 import { List, ListItem } from 'react-native-elements';
 
+var darkMode;
 var screenWidth = Dimensions.get('window').width;
 var screenHeight = Dimensions.get('window').height;
 var Items = require('./Assets/ExampleInventory.json');
-var darkMode;
 
 export default class InventoryScreen extends React.Component {
+
+    componentWillMount() {
+        AsyncStorage.getItem('darkMode', (err, result) => {
+            if(result == 'true') {
+                darkMode = true;
+            }
+            else {
+                darkMode = false;
+            }
+        })
+    }
+
+    state = {
+        checkedItems: [],
+        color: darkMode ? '#99ccff' : '#99ccff',
+        color1: darkMode ? '#808080': '#e6eeff' ,
+        color2: darkMode ? '#808080' : '#F5FCFF',
+        color3: darkMode ? '#f4a460' : '#FF9E24',
+        color4: darkMode ? '#808080' : '#d3d3d3',
+        color5: darkMode ? '#99ccff' : '#808080',
+        color6: darkMode ? '#00ffff' : '#333333'
+    };
+
+    componentDidMount() {
+        this._isMounted = true;
+        AsyncStorage.getItem('darkMode', (err, result) => {
+            if(this._isMounted) {
+                this.setState({ switchValue: (result == 'true') });
+            }
+            if((this.state.color1 == '#808080' && result == 'false') || (this.state.color1 == '#e6eeff' && result == 'true'))
+                if(this._isMounted)
+                    this.reset()
+         })
+         this.props.navigation.setParams({
+            handleThis: this.search
+        });
+        var checkedItems = [];
+        for (i = 0; i < Items.inventoryItems.length; i++) {
+            checkedItems = checkedItems.concat([null]);
+        }
+        if(this._isMounted) {
+            this.setState({ checkedItems: checkedItems,})
+        }
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
+   }
+
+    reset() {
+        const resetAction = NavigationActions.reset({
+            index: 0,
+            actions: [
+                NavigationActions.navigate({ routeName: 'Inventory', params: {}, })
+            ]
+        });
+
+        this.props.navigation.dispatch(resetAction);
+    }
 
     static navigationOptions = ({ navigation}) => {
         const { params = {} } = navigation.state;
@@ -46,39 +105,6 @@ export default class InventoryScreen extends React.Component {
         }
     };
 
-    componentWillMount() {
-        AsyncStorage.getItem('darkMode', (err, result) => {
-            if(result == 'true') {
-                darkMode = true;
-            }
-            else {
-                darkMode = false;
-            }
-        })
-    }
-
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            checkedItems: [],
-        }
-    }
-
-    componentDidMount() {
-        this._isMounted = true;
-        this.props.navigation.setParams({
-            handleThis: this.search
-        });
-        var checkedItems = [];
-        for (i = 0; i < Items.inventoryItems.length; i++) {
-            checkedItems = checkedItems.concat([null]);
-        }
-        if(this._isMounted) {
-            this.setState({ checkedItems: checkedItems,})
-        }
-    }
-
     search = () => {
         var request = '';
         for (i = 0; i < Items.inventoryItems.length; i++) {
@@ -106,10 +132,6 @@ export default class InventoryScreen extends React.Component {
         }
     }
 
-    componentWillUnmount() {
-         this._isMounted = false;
-    }
-
     render() {
         const { navigate } = this.props.navigation;
         return (
@@ -119,7 +141,7 @@ export default class InventoryScreen extends React.Component {
                 alignItems: 'flex-start',
             }}>
                 <View style={{ flex: 1, width: (screenWidth), }}>
-                    <List containerStyle={{ marginTop: 0 }}>
+                    <List containerStyle={{ marginTop: 0, backgroundColor: this.state.color1 }}>
                         <FlatList
                             data={Items.inventoryItems}
                             extraData={this.state}
@@ -127,6 +149,8 @@ export default class InventoryScreen extends React.Component {
                             renderItem={({ item, index}) => (
                                 <ListItem
                                     title={item.itemName}
+                                    titleStyle={{ color: this.state.color6 }}
+                                    subtitleStyle={{ color: this.state.color5 }}
                                     subtitle={item.timeLeft}
                                     rightIcon={
                                         <TouchableOpacity onPress={() => this.check(item, index)}>
@@ -148,13 +172,13 @@ export default class InventoryScreen extends React.Component {
                     justifyContent: 'flex-end',
                     alignItems: 'flex-end',
                 }} >
-                    <View style={styles.bMenu}>
-                        <View style={styles.bMenu}>
+                    <View style={this.styles.bMenu}>
+                        <View style={this.styles.bMenu}>
                             <TouchableOpacity>
-                                <Image source={require('./Assets/aClipboard.png')} style={styles.mButtons} />
+                                <Image source={require('./Assets/aClipboard.png')} style={this.styles.mButtons} />
                             </TouchableOpacity>
                         </View>
-                        <View style={styles.bMenu}>
+                        <View style={this.styles.bMenu}>
                             <TouchableOpacity onPress={() => {
                                 const resetAction = NavigationActions.reset({
                                     index: 0,
@@ -165,10 +189,10 @@ export default class InventoryScreen extends React.Component {
 
                                 this.props.navigation.dispatch(resetAction);
                             }}>
-                                <Image source={require('./Assets/book.png')} style={styles.mButtons} />
+                                <Image source={require('./Assets/book.png')} style={this.styles.mButtons} />
                             </TouchableOpacity>
                         </View>
-                        <View style={styles.bMenu}>
+                        <View style={this.styles.bMenu}>
                             <TouchableOpacity onPress={() => {
                                 const resetAction = NavigationActions.reset({
                                     index: 0,
@@ -179,10 +203,10 @@ export default class InventoryScreen extends React.Component {
 
                                 this.props.navigation.dispatch(resetAction);
                             }}>
-                                <Image source={require('./Assets/calendar.png')} style={styles.mButtons} />
+                                <Image source={require('./Assets/calendar.png')} style={this.styles.mButtons} />
                             </TouchableOpacity>
                         </View>
-                        <View style={styles.bMenu}>
+                        <View style={this.styles.bMenu}>
                             <TouchableOpacity onPress={() => {
                                 const resetAction = NavigationActions.reset({
                                     index: 0,
@@ -193,7 +217,7 @@ export default class InventoryScreen extends React.Component {
 
                                 this.props.navigation.dispatch(resetAction);
                             }}>
-                                <Image source={require('./Assets/settings.png')} style={styles.mButtons} />
+                                <Image source={require('./Assets/settings.png')} style={this.styles.mButtons} />
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -201,55 +225,66 @@ export default class InventoryScreen extends React.Component {
             </View>
         );
     }
+    styles = StyleSheet.create({
+
+        top: {
+            flex: 1,
+            backgroundColor: this.state.color2,
+            alignItems: 'flex-start',
+        },
+    
+        search: {
+            backgroundColor: this.state.color4, 
+            height: screenHeight * 0.05, 
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: screenWidth,
+        },    
+
+        containerSwitch: {
+            flex: 1,
+            alignItems: 'center',
+            marginTop: 100
+        },
+    
+        aMenu: {
+            height: screenHeight * 0.10,
+            width: screenWidth,
+            flexDirection: 'row',
+            backgroundColor: this.state.color2,
+            justifyContent: 'flex-end',
+            alignItems: 'flex-end',
+        },
+    
+        bMenu: {
+            flex: 1,
+            flexDirection: 'row',
+            backgroundColor: this.state.color2,
+            justifyContent: 'flex-end',
+            alignItems: 'flex-end',
+        },
+    
+        mButtons: {
+            width: screenWidth * 0.25,
+            height: screenHeight * 0.10,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: this.state.color3,
+        },
+    
+        container: {
+            flex: 1,
+            backgroundColor: this.state.color2,
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+    
+        buttonLayout: {
+            flex: 1,
+            flexDirection: 'column',
+            backgroundColor: this.state.color2,
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+        },
+    });
 }
-
-const styles = StyleSheet.create({
-
-    top: {
-        flex: 1,
-        backgroundColor: '#F5FCFF',
-        alignItems: 'flex-start',
-    },
-
-    search: {
-        backgroundColor: '#d3d3d3', 
-        height: screenHeight * 0.05, 
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: screenWidth,
-    },
-
-    aMenu: {
-        height: screenHeight * 0.10,
-        width: screenWidth,
-        flexDirection: 'row',
-        backgroundColor: '#F5FCFF',
-        justifyContent: 'flex-end',
-        alignItems: 'flex-end',
-    },
-
-    bMenu: {
-        flex: 1,
-        flexDirection: 'row',
-        backgroundColor: '#F5FCFF',
-        justifyContent: 'flex-end',
-        alignItems: 'flex-end',
-    },
-
-    mButtons: {
-        width: screenWidth * 0.25,
-        height: screenHeight * 0.10,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#FF9E24',
-    },
-
-    aButton: {
-        width: screenWidth * 0.25,
-        height: screenHeight * 0.15,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#99ccff',
-    },
-
-});
