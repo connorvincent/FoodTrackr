@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Text, View, StyleSheet, Button, Dimensions, TouchableOpacity, Image, FlatList, TouchableHighlight, AsyncStorage
+  Text, View, StyleSheet, Button, Dimensions, TouchableOpacity, Image, FlatList, TouchableHighlight, AsyncStorage, ScrollView
 } from 'react-native';
 import {Agenda, Calendar} from 'react-native-calendars';
 import { Constants, } from 'expo';
@@ -23,45 +23,68 @@ export default class PlannerScreen extends Component {
 
 
 	componentDidMount() {
-	}
-
-	
+        var date = '';
+        if (!this.props.navigation.state.params.item) {
+            var today = new Date();
+            date = today.getFullYear() + "-" + parseInt(today.getMonth()+1) + "-" + today.getDate();
+        }
+        else
+        {
+            date = this.props.navigation.state.params.item;
+        }
+        daySelected = date;
+        this.setState({ selected: date });
+        setTimeout(() => {
+            this.fetchData(date);
+        }, 1000);
+    }
 
     render() {
 		const { navigate } = this.props.navigation;
         return (
             <View style={{ flex: 1, }}>
-				<View style={{ flex: 0.6, }}>
+				<ScrollView style={{ flex: 1 }}>
 					<Calendar
 						onDayPress={this.onDayPress}
 						style={styles.calendar}
 						hideExtraDays
 						markedDates={{[this.state.selected]: {selected: true}}}
 					/>
-				</View>
-				<View style={{ flex: 0.35, }}>
+				</ScrollView>
+				<View style={{ flex: 0.75 }}>
 					  <List containerStyle={{ marginTop: 0 }}>
 						<FlatList
 							data={this.state.data}
-							extraData={this.state}
+							extraData={this.state.data}
 							keyExtractor={(x, i) => i}
-							renderItem={({ item, index }) => (
-								<TouchableHighlight onPress={() => this.onItemPress(navigate, item)} underlayColor='#ffb366'>
-											 <View>
-												 <ListItem
-													roundAvatar
-													avatar={{ uri: item.image_url }}
-													title={item.title}
-													subtitle={item.publisher}
-												 />
-											 </View>
-									</TouchableHighlight>
-							)}     
+							renderItem={({ item, index }) => {
+                                var swipeoutBtns = [{
+                                    text: 'Delete',
+                                    backgroundColor: '#99ccff',
+                                    underlayColor: '#FF9E24',
+                                    onPress: () => { this.delete(item, index) }
+                                }];
+                                return (
+                                    <Swipeout right={swipeoutBtns} autoClose={true} backgroundColor='transparent'>
+                                        <TouchableHighlight onPress={() => this.onItemPress(navigate, item)} underlayColor='#ffb366'>
+                                            <View>
+                                                <ListItem
+                                                    roundAvatar
+                                                    avatar={{ uri: item.image_url }}
+                                                    title={item.title}
+                                                    subtitle={item.publisher}
+                                                    hideChevron={true}
+                                                />
+                                            </View>
+                                        </TouchableHighlight>
+                                    </Swipeout>
+                                )
+                            }}     
 						/>
 					</List>
 				</View>
-				<View style={{ flex: 0.05, }}>
-					<TouchableOpacity style={{ backgroundColor: '#99ccff', flex: 1, alignItems: 'center', justifyContent: 'center', }} onPress={() => this._onPress(navigate) }>
+				<View style={{ height: screenHeight * 0.05, width: screenWidth }}>
+					<TouchableOpacity style={{ backgroundColor: '#99ccff', flex: 1, alignItems: 'center', justifyContent: 'center', }} onPress={() => this._onPress() }>
 						<Text style={{ color: 'black', fontSize: 15, textAlign: 'center' }} >
 							Add Recipe
 						</Text>
@@ -123,25 +146,39 @@ export default class PlannerScreen extends Component {
     }
 	onDayPress = (day) => {
 		this.setState({ selected: day.dateString })
-		setTimeout(() => {
-			AsyncStorage.getItem(`${day.dateString}`, (err, result) => {
-				if(result) {
-					this.setState({ data: JSON.parse(result) })
-				}
-				else 
-				{
-					this.setState({ data: [{"publisher": "No recipes on this day", "title": "Empty Date", "source_url": "https://maxcdn.icons8.com/Share/icon/win10/Science//empty_set1600.png", "image_url": "https://maxcdn.icons8.com/Share/icon/win10/Science//empty_set1600.png"}] })
-				}
-			})
-		}, 1000);
-		this.daySelected = day.dateString;
-		console.log(day.dateString);
-	}
-	_onPress(navigate) {
-		navigate('Recipes', { redirectToPlanner: `${daySelected}` });
+		this.fetchData(day.dateString);
+        daySelected = day.dateString;
+    }
+	_onPress() {
+        const resetAction = NavigationActions.reset({
+            index: 0,
+            actions: [
+                NavigationActions.navigate({ routeName: 'Recipes', params: { redirectToPlanner: `${daySelected}` } })
+            ]
+        });
+
+        this.props.navigation.dispatch(resetAction);
 	}
 	onItemPress = (navigate, item) => {
 		navigate('Get', { source_url: item.source_url })
+    }
+    delete = (item, index) => {
+        var copy = this.state.data;
+        copy.splice(index, 1);
+        this.setState({ data: copy })
+        AsyncStorage.setItem(`${daySelected}`, JSON.stringify(copy));
+        this.fetchData(daySelected);
+    }
+    fetchData(day) {
+        AsyncStorage.getItem(`${day}`, (err, result) => {
+            if(result && result != '[]') {
+                this.setState({ data: JSON.parse(result) })
+            }
+            else 
+            {
+                this.setState({ data: [{"publisher": "No recipes on this day", "title": "Empty Date", "source_url": "https://maxcdn.icons8.com/Share/icon/win10/Science//empty_set1600.png", "image_url": "https://maxcdn.icons8.com/Share/icon/win10/Science//empty_set1600.png"}] })
+            }
+        })
     }
 }
 

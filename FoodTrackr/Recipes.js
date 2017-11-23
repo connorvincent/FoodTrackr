@@ -14,39 +14,46 @@ var screenWidth = Dimensions.get('window').width;
 var screenHeight = Dimensions.get('window').height;
 var page = 1;
 var easteregg = false;
-var prevInput = '';
+var prevInput;
 var endReached = false;
 
 export default class RecipesScreen extends React.Component {
 
-    static navigationOptions = ({ navigation }) => ({
-        title: 'Recipes',
-        headerLeft: (
-            <View style={{ height: screenWidth * 0.10, width: screenWidth * 0.10, backgroundColor: '#99ccff', justifyContent: 'center', alignItems: 'center', }}>
-                <TouchableOpacity onPress={() => navigation.state.params.redirectToPlanner ? navigation.navigate('Favorites', { redirectToPlanner: `${true}` }) : navigation.navigate('Favorites', { redirectToPlanner: "" })}>
-                    <View>
-                        <Image source={require('./Assets/favorite.png')} style={{height: screenWidth * 0.10, width: screenWidth * 0.10, backgroundColor: '#99ccff',}} />
-                    </View>
-                </TouchableOpacity>
-            </View>
-        ),
-        headerRight: <Text style={{ color: '#0000ff', fontSize: 10, }}>Powered By Food2Fork.com</Text>,
-        headerStyle: { paddingTop: Constants.statusBarHeight, height: 60 + Constants.statusBarHeight, backgroundColor: '#99ccff' },
-        gesturesEnabled: false,
-    });
-
-    state = {
-        text: '',
-        data: [],
-        loading: false,
+    static navigationOptions = ({ navigation }) => {
+        return {
+            title: 'Recipes',
+            headerLeft: (
+                <View style={{ height: screenWidth * 0.10, width: screenWidth * 0.10, backgroundColor: '#99ccff', justifyContent: 'center', alignItems: 'center', }}>
+                    <TouchableOpacity onPress={() => navigation.state.params.redirectToPlanner ? navigation.navigate('Favorites', 
+                    { redirectToPlanner: `${navigation.state.params.redirectToPlanner}` }) : navigation.navigate('Favorites', { redirectToPlanner: "" })}>
+                        <View>
+                            <Image source={require('./Assets/favorite.png')} style={{height: screenWidth * 0.10, width: screenWidth * 0.10, backgroundColor: '#99ccff',}} />
+                        </View>
+                    </TouchableOpacity>
+                </View>
+            ),
+            headerRight: <Text style={{ color: '#0000ff', fontSize: 10, }}>Powered By Food2Fork.com</Text>,
+            headerStyle: { paddingTop: Constants.statusBarHeight, height: 60 + Constants.statusBarHeight, backgroundColor: '#99ccff' },
+            gesturesEnabled: false,
+        }
     };
 
+    state = {
+            text: '',
+            data: [],
+            loading: false,
+    }
+
     componentDidMount() {
-        this.prevInput = this.state.text;
-        this.search();
         if (this.props.navigation.state.params.input) {
             this.setState({ text: this.props.navigation.state.params.input });
         }
+        else {
+            this.setState({ text: '' });
+        }
+        setTimeout(() => {
+            this.preSearch();
+        }, 1000);
     }
 
     componentWillUpdate(prevProps, prevState) {
@@ -69,9 +76,10 @@ export default class RecipesScreen extends React.Component {
         }
         else if(this.prevInput == input)  {
             Keyboard.dismiss();
+            console.log('true');
         }
         else {
-            this.prevInput = input;
+            prevInput = input;
             this.search();
         }
     };
@@ -131,12 +139,12 @@ export default class RecipesScreen extends React.Component {
 
     favorite = (item, index) => {
         AsyncStorage.getItem('favorites', (err, result) => {
-            if(result.startsWith('[{')) {
+            if(result) {
                 AsyncStorage.setItem('favorites', JSON.stringify(JSON.parse(result).concat(item)));
             }
             else 
             {
-                AsyncStorage.setItem('favorites', JSON.stringify([].concat(item)));
+                AsyncStorage.setItem('favorites', JSON.stringify([item]));
             }
         })
     }
@@ -146,13 +154,23 @@ export default class RecipesScreen extends React.Component {
             navigate('Get', { source_url: item.source_url })
         }
         else {
-                const resetAction = NavigationActions.reset({
-                    index: 0,
-                    actions: [
-                        NavigationActions.navigate({ routeName: 'Planner', params: {item: `${JSON.stringify(item)}`}, })
-                    ]
-                });
-                this.props.navigation.dispatch(resetAction);
+            AsyncStorage.getItem(`${this.props.navigation.state.params.redirectToPlanner}`, (err, result) => {
+                if(result) {
+                    AsyncStorage.setItem(`${this.props.navigation.state.params.redirectToPlanner}`, JSON.stringify(JSON.parse(result).concat(item)));
+                }
+                else 
+                {
+                    AsyncStorage.setItem(`${this.props.navigation.state.params.redirectToPlanner}`, JSON.stringify([item]));
+                }
+            })
+            const resetAction = NavigationActions.reset({
+                index: 0,
+                actions: [
+                    NavigationActions.navigate({ routeName: 'Planner', params: {item: `${this.props.navigation.state.params.redirectToPlanner}`}, })
+                ]
+            });
+            console.log(`send to Planner: ${this.props.navigation.state.params.redirectToPlanner}`);
+            this.props.navigation.dispatch(resetAction);
         }
     }
 

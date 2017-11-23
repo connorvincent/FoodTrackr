@@ -31,7 +31,7 @@ export default class FavoritesScreen extends React.Component {
         var copy = this.state.data;
         copy.splice(index, 1);
         this.setState({ data: copy })
-            AsyncStorage.setItem('favorites', JSON.stringify(copy));
+        AsyncStorage.setItem('favorites', JSON.stringify(copy));
     }
 
     onItemPress = (navigate, item) => {
@@ -39,12 +39,22 @@ export default class FavoritesScreen extends React.Component {
             navigate('Get', { source_url: item.source_url })
         }
         else {
+            AsyncStorage.getItem(`${this.props.navigation.state.params.redirectToPlanner}`, (err, result) => {
+                if(result) {
+                    AsyncStorage.setItem(`${this.props.navigation.state.params.redirectToPlanner}`, JSON.stringify(JSON.parse(result).concat(item)));
+                }
+                else 
+                {
+                    AsyncStorage.setItem(`${this.props.navigation.state.params.redirectToPlanner}`, JSON.stringify([item]));
+                }
+            })
             const resetAction = NavigationActions.reset({
                 index: 0,
                 actions: [
-                    NavigationActions.navigate({ routeName: 'Planner', params: { item: `${JSON.stringify(item)}` }, })
+                    NavigationActions.navigate({ routeName: 'Planner', params: {item: `${this.props.navigation.state.params.redirectToPlanner}`}, })
                 ]
             });
+            console.log(`send to Planner: ${this.props.navigation.state.params.redirectToPlanner}`)
             this.props.navigation.dispatch(resetAction);
         }
     }
@@ -58,37 +68,32 @@ export default class FavoritesScreen extends React.Component {
                         data={this.state.data}
                         extraData={this.state}
                         keyExtractor={(x, i) => i}
-                        renderItem={({ item, index }) => 
-                                {
-                                    var swipeoutBtns = [{
-                                        text: 'Delete',
-                                        backgroundColor: '#99ccff',
-                                        underlayColor: '#FF9E24',
-                                        onPress: () => { this.delete(item, index) }
-                                    }];
-                                    return (
-                                        <Swipeout right={swipeoutBtns} autoClose={true} backgroundColor='transparent'>
-                                            <TouchableHighlight onPress={() => this.onItemPress(navigate, item)} underlayColor='#ffb366'>
-                                                <View>
-                                                    <ListItem
-                                                        roundAvatar
-                                                        avatar={{ uri: item.image_url }}
-                                                        title={item.title}
-                                                        subtitle={item.publisher}
-                                                    />
-                                                </View>
-                                            </TouchableHighlight>
-                                        </Swipeout>
-                                    )
-                                }
-                            }
+                        renderItem={({ item, index }) => {
+                            var swipeoutBtns = [{
+                                text: 'Delete',
+                                backgroundColor: '#99ccff',
+                                underlayColor: '#FF9E24',
+                                onPress: () => { this.delete(item, index) }
+                            }];
+                            return (
+                                <Swipeout right={swipeoutBtns} autoClose={true} backgroundColor='transparent'>
+                                    <TouchableHighlight onPress={() => this.onItemPress(navigate, item)} underlayColor='#ffb366'>
+                                        <View>
+                                            <ListItem
+                                                roundAvatar
+                                                avatar={{ uri: item.image_url }}
+                                                title={item.title}
+                                                subtitle={item.publisher}
+                                                hideChevron={true}
+                                            />
+                                        </View>
+                                    </TouchableHighlight>
+                                </Swipeout>
+                            )
+                        }}
                     />
                 </List>
             </View>
         );
     }
 }
-
-const styles = StyleSheet.create({
-
-});

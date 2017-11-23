@@ -14,7 +14,7 @@ var Items = require('./Assets/ExampleInventory.json');
 
 export default class InventoryScreen extends React.Component {
 
-    static navigationOptions = ({ navigation, state }) => {
+    static navigationOptions = ({ navigation}) => {
         const { params = {} } = navigation.state;
         return {
             title: 'Inventory',
