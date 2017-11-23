@@ -140,7 +140,7 @@ export default class InventoryScreen extends React.Component {
                 backgroundColor: '#e6eeff',
                 alignItems: 'flex-start',
             }}>
-                <View style={{ flex: 1, width: (screenWidth), }}>
+                <View style={{ flex: 1, width: (screenWidth), backgroundColor: this.state.color1 }}>
                     <List containerStyle={{ marginTop: 0, backgroundColor: this.state.color1 }}>
                         <FlatList
                             data={Items.inventoryItems}
