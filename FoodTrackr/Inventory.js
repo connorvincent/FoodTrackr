@@ -29,6 +29,7 @@ export default class InventoryScreen extends React.Component {
 
     state = {
         data: [],
+        date: "",
         checkedItems: [],
         color: darkMode ? '#99ccff' : '#99ccff',
         color1: darkMode ? '#808080': '#e6eeff' ,
@@ -59,8 +60,9 @@ export default class InventoryScreen extends React.Component {
         AsyncStorage.getItem('inventory', (err, result) => {
             if (this._isMounted)
                 this.setState({ data: JSON.parse(result) });
-            //console.log(this.state.data);
         })
+        var today = new Date();
+        this.setState({ date: today.getFullYear() + '-' + parseInt(today.getMonth()+1) + '-' + today.getDate() })
     }
 
     componentWillUnmount() {
@@ -144,6 +146,42 @@ export default class InventoryScreen extends React.Component {
         AsyncStorage.setItem('inventory', JSON.stringify(copy));
     }
 
+    treatAsUTC(date) {
+        var result = new Date(date);
+        result.setMinutes(result.getMinutes() - result.getTimezoneOffset());
+        return result;
+    }
+
+    daysBetween(startDate, endDate) {
+        var millisecondsPerDay = 24 * 60 * 60 * 1000;
+        return (treatAsUTC(endDate) - treatAsUTC(startDate)) / millisecondsPerDay;
+    }
+
+    getColor = (expirationDate) => {
+        var gap = this.daysUntil(expirationDate);
+        if(gap <= 0) {
+            return 'black';
+        } else if(gap <= 1) {
+            return 'red';
+        } else if(gap <= 3) {
+            return 'yellow';
+        } else {
+            return 'green';
+        }
+    }
+    
+    daysUntil(integer) {
+        var str = integer.toString().slice(0,4)+"-"+integer.toString().slice(4,6)+"-"+integer.toString().slice(6,16);
+        var today = new Date();
+        today = today.getFullYear() + "-" + parseInt(today.getMonth()+1) + "-" + today.getDate();
+        var expirationDate = str;
+        var date = new Date(today);
+        var date1 = new Date(expirationDate);
+        var timeDiff = (date1.getTime() - date.getTime());
+        daysBetween = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+        return daysBetween;
+    }
+
     render() {
         const { navigate } = this.props.navigation;
         return (
@@ -170,7 +208,7 @@ export default class InventoryScreen extends React.Component {
                                         <ListItem
                                             title={item.itemName}
                                             titleStyle={{ color: this.state.color6 }}
-                                            subtitleStyle={{ color: this.state.color5 }}
+                                            subtitleStyle={{ color: this.getColor(item.expirationDate) }}
                                             subtitle={"Date of Expiration: " + item.expirationDate.toString().charAt(0)
                                                 + item.expirationDate.toString().charAt(1)
                                                 + item.expirationDate.toString().charAt(2)

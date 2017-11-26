@@ -76,6 +76,9 @@ export default class AddItemsScreen extends React.Component {
             Keyboard.dismiss();
             Alert.alert('Invalid Data', 'Only letters and spaces are allowed.');
         }
+        else if(!input) {
+            Alert.alert('Invalid Data', 'Input may not be blank');
+        }
         else if (this.prevInput == input) {
             Keyboard.dismiss();
         }
@@ -83,73 +86,37 @@ export default class AddItemsScreen extends React.Component {
             this.prevInput = input;
         }
     };
-
-    checkNums = () => {
-        var input = this.state.text1;
-        if (input.match(/[^0-9 ]/)) {
-            Keyboard.dismiss();
-            Alert.alert('Invalid Data', 'Only numbers are allowed.');
-        }
-        else if (this.prevInput == input) {
-            Keyboard.dismiss();
-        }
-        else {
-            this.prevInput = input;
-            this.setItemName();
-        }
-    };
-
-    sortInventory = () => {
-
-    }
-
-    /*setItem = () => {
-        var item = { itemName: this.state.text, expirationDate: this.state.date };
-        AsyncStorage.getItem('inventory', (err, result) => {
-            if (result) {
-                for (i = 0; i < result.length; i++) {
-                    var data = JSON.parse(result[i]);
-                    var data1 = JSON.parse(result[i + 1]);
-                    if ((parseInt(data.expirationDate) < this.state.date) && (parseInt(data1.expirationDate) > this.state.date)) {
-                        AsyncStorage.setItem('inventory', result.splice(i, 0, item));
-                    } else if (parseInt(data.expirationDate) == this.state.date) {
-                        if (data.charAt(0) >= this.state.text.charAt(0)) {
-                            AsyncStorage.setItem('inventory', result.splice((i - 1), 0, item));
-                        }
-                    } else if (i == result.length - 1) {
-                        AsyncStorage.setItem('inventory', result.splice(i, 0, item));
-                    }
-                }
-            }
-            else {
-                AsyncStorage.setItem('inventory', item);
-            }
-        })
-        const backAction = NavigationActions.back({});
-        this.props.navigation.dispatch(backAction);
-    }*/
-
+    
     setItem = () => {
-        var item = {itemName: this.state.text, expirationDate: this.state.date};
-        AsyncStorage.getItem('inventory', (err, result) => {
-            if (result && result) {
-                var parsedResult = JSON.parse(result).concat([item]);
-                for(i = 0; i < parsedResult.length; i++) {
-                    parsedResult[i].expirationDate = parseInt(parsedResult[i].expirationDate.replace(/-/g, ""));
+        var input = this.state.text;
+        if (input.match(/[^A-Za-z ]/)) {
+            Alert.alert('Invalid Data', 'Only letters and spaces are allowed.');
+        }
+        else if(!input) {
+            Alert.alert('Invalid Data', 'Input may not be blank');
+        }
+        else {
+            var item = {itemName: this.state.text, expirationDate: this.state.date};
+            AsyncStorage.getItem('inventory', (err, result) => {
+                if (result && result) {
+                    var parsedResult = JSON.parse(result).concat([item]);
+                    for(i = 0; i < parsedResult.length; i++) {
+                        parsedResult[i].expirationDate = parseInt(parsedResult[i].expirationDate.replace(/-/g, ""));
+                    }
+                    parsedResult.sort(function (a, b) {
+                        return a.expirationDate - b.expirationDate;
+                    });
+                    for(i = 0; i < parsedResult.length; i++) {
+                        parsedResult[i].expirationDate = `${parsedResult[i].expirationDate}`;
+                    }
+                    AsyncStorage.setItem('inventory', JSON.stringify(parsedResult));
                 }
-                parsedResult.sort(function (a, b) {
-                    return a.expirationDate - b.expirationDate;
-                });
-                for(i = 0; i < parsedResult.length; i++) {
-                    parsedResult[i].expirationDate = `${parsedResult[i].expirationDate}`;
+                else {
+                    AsyncStorage.setItem('inventory', JSON.stringify([item]));
                 }
-                AsyncStorage.setItem('inventory', JSON.stringify(parsedResult));
-            }
-            else {
-                AsyncStorage.setItem('inventory', JSON.stringify([item]));
-            }
-        })
-        this.resetToInventory();
+            })
+            this.resetToInventory();
+        }
     }
 
     resetToInventory() {
