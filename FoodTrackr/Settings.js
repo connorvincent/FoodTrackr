@@ -68,7 +68,7 @@ export default class SettingsScreen extends React.Component {
 
     // About button handler
     _onPress() {
-        Alert.alert('About Team B.A.C.K screen appears here');
+        Alert.alert('Contributors: \n Connor Vincent\n W0646304@selu.edu\n\nKaleb Champagne\n kaleb.champagne@selu.edu \n\nAndrew Sievers \n andrew.sievers@selu.edu\n\n Brandon Lundy \n brandon.lundy@selu.edu');
     }
 
     reset() {
@@ -118,7 +118,7 @@ export default class SettingsScreen extends React.Component {
                 {/* Button for push notifications */}
                 <View style={{ height: 50, flexDirection: 'row', justifyContent: 'space-between' }}>
                     <Text style={{ fontSize: 25, color: this.state.color4 }}>
-                        Receive Push Notifications
+                        Receive Notifications
                 </Text>
                     <Switch
                         onValueChange={this._handleToggleSwitch2}
