@@ -194,7 +194,7 @@ export default class InventoryScreen extends React.Component {
                     <List containerStyle={{ marginTop: 0, backgroundColor: this.state.color1 }}>
                         <FlatList
                             data={this.state.data}
-                            extraData={this.state.data}
+                            extraData={this.state}
                             keyExtractor={(x, i) => i}
                             renderItem={({ item, index }) => {
                                 var swipeoutBtns = [{
