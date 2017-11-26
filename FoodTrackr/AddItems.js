@@ -4,7 +4,7 @@ import {
     TouchableHighlight, TouchableOpacity, Dimensions,
     AsyncStorage, Image, Keyboard
 } from 'react-native';
-import DatePicker from 'react-native-datepicker'
+import DatePicker from 'react-native-datepicker';
 import { Constants, } from 'expo';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 
