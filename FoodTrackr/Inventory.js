@@ -59,7 +59,7 @@ export default class InventoryScreen extends React.Component {
         AsyncStorage.getItem('inventory', (err, result) => {
             if (this._isMounted)
                 this.setState({ data: JSON.parse(result) });
-            console.log(this.state.data);
+            //console.log(this.state.data);
         })
     }
 
@@ -175,10 +175,10 @@ export default class InventoryScreen extends React.Component {
                                                 + item.expirationDate.toString().charAt(1)
                                                 + item.expirationDate.toString().charAt(2)
                                                 + item.expirationDate.toString().charAt(3)
-                                                + "-"
+                                                + '-'
                                                 + item.expirationDate.toString().charAt(4)
                                                 + item.expirationDate.toString().charAt(5)
-                                                + "-"
+                                                + '-'
                                                 + item.expirationDate.toString().charAt(6)
                                                 + item.expirationDate.toString().charAt(7)
                                             }

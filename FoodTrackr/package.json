@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "expo": "^21.0.2",
+    "npm": "^4.6.1",
     "react": "16.0.0-alpha.12",
     "react-native": "https://github.com/expo/react-native/archive/sdk-21.0.2.tar.gz",
     "react-native-calendars": "^1.7.1",

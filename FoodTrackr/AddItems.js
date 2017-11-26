@@ -2,10 +2,9 @@ import React, { Component } from 'react';
 import {
     Text, StyleSheet, View, TextInput, Alert,
     TouchableHighlight, TouchableOpacity, Dimensions,
-    AsyncStorage, Image
+    AsyncStorage, Image, Keyboard
 } from 'react-native';
 import DatePicker from 'react-native-datepicker'
-import Modal from 'react-native-modal';
 import { Constants, } from 'expo';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 
@@ -38,7 +37,7 @@ export default class AddItemsScreen extends React.Component {
     state = {
         text: '',
         text1: '',
-        date: 0,
+        date: "",
         loading: false,
         visible: false,
         color1: darkMode ? '#808080' : '#e6eeff'
@@ -51,10 +50,24 @@ export default class AddItemsScreen extends React.Component {
                 if (this._isMounted)
                     this.reset()
         })
+        var today = new Date();
+        this.setState({ date: today.getFullYear() + "-" + parseInt(today.getMonth()+1) + "-" + today.getDate() })
     }
 
     componentWillUnmount() {
         this._isMounted = false;
+    }
+
+    reset() {
+        const resetAction = NavigationActions.reset({
+            index: 1,
+            actions: [
+                NavigationActions.navigate({ routeName: 'Inventory', params: {}, }),
+                NavigationActions.navigate({ routeName: 'AddItems', params: {}, })
+            ]
+        });
+
+        this.props.navigation.dispatch(resetAction);
     }
 
     checkText = () => {
@@ -68,7 +81,6 @@ export default class AddItemsScreen extends React.Component {
         }
         else {
             this.prevInput = input;
-            this.setState()
         }
     };
 
@@ -91,7 +103,7 @@ export default class AddItemsScreen extends React.Component {
 
     }
 
-    setItem = () => {
+    /*setItem = () => {
         var item = { itemName: this.state.text, expirationDate: this.state.date };
         AsyncStorage.getItem('inventory', (err, result) => {
             if (result) {
@@ -115,21 +127,43 @@ export default class AddItemsScreen extends React.Component {
         })
         const backAction = NavigationActions.back({});
         this.props.navigation.dispatch(backAction);
-    }
+    }*/
 
-    /*setItem = () => {
+    setItem = () => {
         var item = {itemName: this.state.text, expirationDate: this.state.date};
         AsyncStorage.getItem('inventory', (err, result) => {
-            if (result) {
-                AsyncStorage.setItem('inventory', JSON.stringify(JSON.parse(result).concat(item)));
+            if (result && result) {
+                var parsedResult = JSON.parse(result).concat([item]);
+                for(i = 0; i < parsedResult.length; i++) {
+                    parsedResult[i].expirationDate = parseInt(parsedResult[i].expirationDate.replace(/-/g, ""));
+                }
+                parsedResult.sort(function (a, b) {
+                    return a.expirationDate - b.expirationDate;
+                });
+                for(i = 0; i < parsedResult.length; i++) {
+                    parsedResult[i].expirationDate = `${parsedResult[i].expirationDate}`;
+                }
+                AsyncStorage.setItem('inventory', JSON.stringify(parsedResult));
             }
             else {
                 AsyncStorage.setItem('inventory', JSON.stringify([item]));
             }
         })
-        const backAction = NavigationActions.back({});
-        this.props.navigation.dispatch(backAction);
-    }*/
+        this.resetToInventory();
+    }
+
+    resetToInventory() {
+        const resetAction = NavigationActions.reset({
+            index: 0,
+            actions: [
+                NavigationActions.navigate({ routeName: 'Inventory', params: {}, })
+            ]
+        });
+
+        setTimeout(() => {
+            this.props.navigation.dispatch(resetAction);
+        }, 500);
+    }
 
     render() {
         const { navigate } = this.props.navigation;
@@ -149,7 +183,7 @@ export default class AddItemsScreen extends React.Component {
                         date={this.state.date}
                         mode="date"
                         placeholder="select date"
-                        format="YYYYMMDD"
+                        format="YYYY-MM-DD"
                         minDate="2017-11-01"
                         maxDate="2019-11-30"
                         confirmBtnText="Confirm"
@@ -166,7 +200,7 @@ export default class AddItemsScreen extends React.Component {
                             }
                             // ... You can check the source to find the other keys.
                         }}
-                        onDateChange={(date) => { this.setState({ date: parseInt(date) }) }}
+                        onDateChange={(date) => { this.setState({ date: date }) }}
                     />
                 </View>
                 <View style={{ height: screenWidth * 0.30, width: screenWidth * 0.30, justifyContent: "flex-start", alignItems: "flex-start" }}>
