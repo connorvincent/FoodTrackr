@@ -159,7 +159,7 @@ export default class InventoryScreen extends React.Component {
 
     getColor = (expirationDate) => {
         var gap = this.daysUntil(expirationDate);
-        if(gap <= 0) {
+        if(gap < 0) {
             return 'black';
         } else if(gap <= 1) {
             return 'red';
