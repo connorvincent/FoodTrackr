@@ -44,7 +44,7 @@ export default class FavoritesScreen extends React.Component {
         AsyncStorage.getItem('favorites', (err, result) => {
             if(this._isMounted)
                 this.setState({ data: JSON.parse(result) });
-         })
+        })
     
     }
 

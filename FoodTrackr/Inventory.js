@@ -7,6 +7,7 @@ import {
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import { Constants } from 'expo';
 import { List, ListItem } from 'react-native-elements';
+import Swipeout from 'react-native-swipeout';
 
 var darkMode;
 var screenWidth = Dimensions.get('window').width;
@@ -27,6 +28,7 @@ export default class InventoryScreen extends React.Component {
     }
 
     state = {
+        data: [],
         checkedItems: [],
         color: darkMode ? '#99ccff' : '#99ccff',
         color1: darkMode ? '#808080': '#e6eeff' ,
@@ -43,7 +45,7 @@ export default class InventoryScreen extends React.Component {
             if((this.state.color1 == '#808080' && result == 'false') || (this.state.color1 == '#e6eeff' && result == 'true'))
                 if(this._isMounted)
                     this.reset()
-         })
+        })
          this.props.navigation.setParams({
             handleThis: this.search
         });
@@ -54,11 +56,16 @@ export default class InventoryScreen extends React.Component {
         if(this._isMounted) {
             this.setState({ checkedItems: checkedItems,})
         }
+        AsyncStorage.getItem('inventory', (err, result) => {
+            if (this._isMounted)
+                this.setState({ data: JSON.parse(result) });
+            console.log(this.state.data);
+        })
     }
 
     componentWillUnmount() {
         this._isMounted = false;
-   }
+    }
 
     reset() {
         const resetAction = NavigationActions.reset({
@@ -129,6 +136,14 @@ export default class InventoryScreen extends React.Component {
         }
     }
 
+    delete = (item, index) => {
+        var copy = this.state.data;
+        copy.splice(index, 1);
+        if (this._isMounted)
+            this.setState({ data: copy })
+        AsyncStorage.setItem('inventory', JSON.stringify(copy));
+    }
+
     render() {
         const { navigate } = this.props.navigation;
         return (
@@ -140,24 +155,44 @@ export default class InventoryScreen extends React.Component {
                 <View style={{ flex: 1, width: (screenWidth), backgroundColor: this.state.color1 }}>
                     <List containerStyle={{ marginTop: 0, backgroundColor: this.state.color1 }}>
                         <FlatList
-                            data={Items.inventoryItems}
-                            extraData={this.state}
+                            data={this.state.data}
+                            extraData={this.state.data}
                             keyExtractor={(x, i) => i}
-                            renderItem={({ item, index}) => (
-                                <ListItem
-                                    title={item.itemName}
-                                    titleStyle={{ color: this.state.color6 }}
-                                    subtitleStyle={{ color: this.state.color5 }}
-                                    subtitle={item.timeLeft}
-                                    rightIcon={
-                                        <TouchableOpacity onPress={() => this.check(item, index)}>
-                                            <Image source={this.state.checkedItems[index] != null ?
-                                                require('./Assets/check_box.png') : require('./Assets/check_box_outline.png')}
-                                                style={{ backgroundColor: '#99ccff', }} />
-                                        </TouchableOpacity>
-                                    }
-                                />
-                            )}
+                            renderItem={({ item, index }) => {
+                                var swipeoutBtns = [{
+                                    text: 'Delete',
+                                    backgroundColor: this.state.color,
+                                    underlayColor: this.state.color3,
+                                    onPress: () => { this.delete(item, index) }
+                                }];
+                                return (
+                                    <Swipeout right={swipeoutBtns} autoClose={true} backgroundColor='transparent'>
+                                        <ListItem
+                                            title={item.itemName}
+                                            titleStyle={{ color: this.state.color6 }}
+                                            subtitleStyle={{ color: this.state.color5 }}
+                                            subtitle={"Date of Expiration: " + item.expirationDate.toString().charAt(0)
+                                                + item.expirationDate.toString().charAt(1)
+                                                + item.expirationDate.toString().charAt(2)
+                                                + item.expirationDate.toString().charAt(3)
+                                                + "-"
+                                                + item.expirationDate.toString().charAt(4)
+                                                + item.expirationDate.toString().charAt(5)
+                                                + "-"
+                                                + item.expirationDate.toString().charAt(6)
+                                                + item.expirationDate.toString().charAt(7)
+                                            }
+                                            rightIcon={
+                                                <TouchableOpacity onPress={() => this.check(item, index)}>
+                                                    <Image source={this.state.checkedItems[index] != null ?
+                                                        require('./Assets/check_box.png') : require('./Assets/check_box_outline.png')}
+                                                        style={{ backgroundColor: '#99ccff', }} />
+                                                </TouchableOpacity>
+                                            }
+                                        />
+                                    </Swipeout>
+                                )
+                            }}
                         />
                     </List>
                 </View>
