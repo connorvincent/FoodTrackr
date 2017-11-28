@@ -26,7 +26,6 @@ export default class SettingsScreen extends React.Component {
 
     state = {
         switchValue: false,
-        switchValue2: true,
         color: darkMode ? '#99ccff' : '#99ccff',
         color1: darkMode ? '#808080': '#e6eeff' ,
         color2: darkMode ? '#808080' : '#F5FCFF',
@@ -57,12 +56,6 @@ export default class SettingsScreen extends React.Component {
         if(this._isMounted) {
             this.setState({ switchValue: val })
             this.reset();
-        }
-    }
-
-    _handleToggleSwitch2 = () => {
-        if(this._isMounted) {
-            this.setState({ switchValue2: !this.state.switchValue2 });
         }
     }
 
@@ -111,18 +104,6 @@ export default class SettingsScreen extends React.Component {
                     <Switch
                         onValueChange={this._handleToggleSwitch}
                         value={this.state.switchValue}
-                    />
-                </View>
-
-
-                {/* Button for push notifications */}
-                <View style={{ height: 50, flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <Text style={{ fontSize: 25, color: this.state.color4 }}>
-                        Receive Notifications
-                </Text>
-                    <Switch
-                        onValueChange={this._handleToggleSwitch2}
-                        value={this.state.switchValue2}
                     />
                 </View>
 

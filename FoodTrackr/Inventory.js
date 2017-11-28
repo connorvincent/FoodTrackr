@@ -164,7 +164,7 @@ export default class InventoryScreen extends React.Component {
         } else if(gap <= 1) {
             return 'red';
         } else if(gap <= 3) {
-            return 'yellow';
+            return 'orange';
         } else {
             return 'green';
         }
