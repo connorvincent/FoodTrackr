@@ -21,6 +21,7 @@ export default class AddItemsScreen extends React.Component {
             height: 60 + Constants.statusBarHeight,
             backgroundColor: '#99ccff'
         },
+        gesturesEnabled: false,
     };
 
     componentWillMount() {
