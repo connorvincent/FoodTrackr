@@ -61,7 +61,7 @@ export default class SettingsScreen extends React.Component {
 
     // About button handler
     _onPress() {
-        Alert.alert('Contributors:', '\n Connor Vincent\n W0646304@selu.edu\n\nKaleb Champagne\n kaleb.champagne@selu.edu \n\nAndrew Sievers \n andrew.sievers@selu.edu\n\n Brandon Lundy \n brandon.lundy@selu.edu');
+        Alert.alert('Contributors:', '\nConnor Vincent\n \nKaleb Champagne\n\nAndrew Sievers \n \nBrandon Lundy \n\n\nJessica Gabriel   (client)');
     }
 
     reset() {
